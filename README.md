@@ -33,11 +33,27 @@
   2. 右側に表示されたプレビュー内で右クリック
   3. Export/Chrome (Puppeteer)/PDFをクリックで保存完了
 
+- ライブラリの追加
+  1. ```~/osada/tsmc65lp```に移動して```vim cds.lib```を打つと、長田さんが引用してるライブラリがどの場所にあるか見られる。
+  2. ```Ctrl+F```は使えないので、コマンドラインに```/hogehoge```を打って```Enter```で検索できる。```N```キーで次候補。
+  3. ライブラリの追加はLibrary Manager -> Edit -> Library Pathに追加。スクロールして最下段をクリックで追加できる。左側はライブラリ名(多分任意)、右側にpathを入れる。
+
+- 長田さんの回路図の見方
+  1. Library Managerから MO_DUAL_LOOP_PLL -> [\*TOP\*]で検索🔍 -> TO1909_TOP_OSADAのschematic
+
+- 中身を見たいとき
+  1. 中身見たいやつをダブルクリック
+  2. 開いたDescendウィンドウで
+    - View:schematic
+    - Open for: auto
+    - new tab
+    でOK
+
 ## 📌 TODO
 
 * [ ] モジュールの階層化
 * [ ] テストベンチの整理
-* [ ]
+* [ ] hoge
 
 ## 💬 備考
 
