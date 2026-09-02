@@ -81,14 +81,70 @@ scripts, not functions with test harnesses):
   `evaluate_objective.m`, `initialize_variables.m`, `genetic_operator.m`,
   `non_domination_sort_mod.m`, `replace_chromosome.m`,
   `tournament_selection.m`, `objective_description_function.m`). Run via
-  `nsga_2(pop, gen)` from inside that folder. The objective function that
-  differs per experiment (jitter/power trade-off for DTC-based vs.
-  harmonic-mixer-based PLLs) lives in that folder's `evaluate_objective.m` —
-  when modifying an optimization objective, edit the copy in the specific
-  experiment folder, not a shared library (there isn't one; each folder
-  forked the NSGA-II code independently). Results land in
-  `OPTresults/`/`Result_onlyVCO/`-style subfolders as `.fig` files per
-  generation plus a `solution.txt`.
+  `nsga_2(pop, gen)` from inside that folder — note
+  `objective_description_function()` is interactive: it `input()`-prompts
+  in the MATLAB console for the number of objectives/decision variables and
+  their min/max ranges, then blocks until you press `c` (after confirming
+  `evaluate_objective.m` matches), so this can't be scripted headlessly
+  without editing that function. The two objectives are always
+  `obj(1)` = integrated RMS jitter (s) and `obj(2)` = total power (mW); the
+  decision variables are per-block bias currents/powers plus loop-bandwidth
+  frequencies (e.g. DTC folder: `[Fc_main, P_vco, P_DTC, P_PD]`, 4
+  variables; HM folder: `[Fc_ext, Fc_main, P_vco1, P_vco2, P_PD, P_HM]`, 6
+  variables, reflecting the extra auxiliary-PLL stage). The objective
+  function that differs per experiment (jitter/power trade-off for DTC-based
+  vs. harmonic-mixer-based PLLs) lives in that folder's
+  `evaluate_objective.m` — when modifying an optimization objective, edit
+  the copy in the specific experiment folder, not a shared library (there
+  isn't one; each folder forked the NSGA-II code independently). Results
+  land in `OPTresults/`/`Result_onlyVCO/`-style subfolders as `.fig` files
+  per generation plus a `solution.txt` (rows = Pareto-front individuals:
+  decision variables followed by the two objective values).
+- `make_graph.m` — reads the `solution*.txt` outputs of several
+  architectures (Integer-N, Fractional-N, DTC-based, HM-based) side by side
+  and plots jitter-vs-power Pareto fronts on one log-log figure — this is
+  the script that reproduces the paper's headline jitter/power trade-off
+  comparison across architectures.
+
+## Domain background (read before touching PLL-related files)
+
+The MATLAB analyses and `PLL論文/` notes revolve around one recurring
+problem in fractional-N PLL design: a divider-based feedback path amplifies
+DSM quantization noise by the division ratio N (e.g. ~27.6 dB for N=24), so
+conventional fractional-N PLLs trade jitter for frequency resolution. The
+scripts/papers here explore two escapes from that trade-off, evaluated by
+the same two metrics (integrated RMS jitter vs. power):
+
+- **DTC/IDAC-based**: a Digital-to-Time Converter predicts and cancels the
+  DSM quantization error directly (needs calibration, e.g. LMS/LUT).
+- **Harmonic-Mixer (HM)-based**: replaces the ÷N feedback divider with a
+  mixer that subtracts a multiple of a local oscillator (`f_OUT − k·f_LO`,
+  via a sample-and-hold harmonic mixer), making the feedback gain ≈1 so
+  quantization noise isn't re-amplified. Built up through
+  `PLL論文/3章まとめ.md`'s progression: single HM PLL → Triple-Loop PLL (3
+  PLLs, unity-gain main loop) → Dual-Feedback PLL (2 PLLs, one loop with two
+  feedback paths — HM-based and divider-based — combining the Triple-Loop's
+  noise benefit with less area/power).
+
+`Conv_FNPLL_noise_analysis.m` models the conventional single-loop case;
+`Dual_FB_PLL_noise_analysis.m` models the Dual-Feedback architecture; the
+`matlab/NSGA-II_*` and `TCAS_DATA_CODE/FIG*/{DTC,HM,...}` folders each
+numerically optimize one architecture's jitter/power trade-off via NSGA-II
+to produce the Pareto fronts that `make_graph.m` compares.
+
+## FPGA_e / FPGA_e2 (Napier's constant on FPGA)
+
+`DigitalTraining/FPGA/FPGA_e/` and `FPGA_e2/` (duplicated under `FPGA/`)
+implement fixed-point computation of Euler's number *e* on an FPGA using the
+binary-splitting series method, built from scratch: `init_400bit.v` (initial
+value), `adder_400bit.v`/`divider_400bit.v` (400-bit fixed-point arithmetic),
+`e_calc.v` (state machine that iteratively sums `1/k!` terms — see the
+`IDLE`→`DIVIDE`→`ADD`→`FINISH` FSM in `e_calc.v`), `convert_to_10.v` /
+`seg_hex.v` (display conversion), and `top_e_display.v` (top-level, targets
+the Quartus project `Napier.qpf`). `e_verilog.py` / `e.py` are Python
+reference implementations (binary-splitting algorithm) used to
+cross-check the Verilog's fixed-point result — when debugging `e_calc.v`,
+compare its output against `e_verilog.py`'s.
 
 ## Notes for making changes
 
