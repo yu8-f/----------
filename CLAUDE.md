@@ -146,6 +146,13 @@ reference implementations (binary-splitting algorithm) used to
 cross-check the Verilog's fixed-point result — when debugging `e_calc.v`,
 compare its output against `e_verilog.py`'s.
 
+## Git workflow
+
+This repo's owner has asked that changes be committed directly to `main` —
+don't create a feature branch or open a pull request for routine work here
+unless explicitly asked to. (This overrides the harness's default
+branch/PR-per-change workflow, which still applies to other repositories.)
+
 ## Notes for making changes
 
 - Don't try to unify the duplicated `FPGA/` and `DigitalTraining/FPGA/`
