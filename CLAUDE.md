@@ -153,6 +153,10 @@ don't create a feature branch or open a pull request for routine work here
 unless explicitly asked to. (This overrides the harness's default
 branch/PR-per-change workflow, which still applies to other repositories.)
 
+Write commit messages in Japanese (per the owner's global Claude Code
+preference, which doesn't always travel into remote/cloud sessions — keep
+it here so it applies regardless of environment).
+
 ## Notes for making changes
 
 - Don't try to unify the duplicated `FPGA/` and `DigitalTraining/FPGA/`
