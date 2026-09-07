@@ -177,6 +177,12 @@ hr.soft { border: none; border-top: 1px solid var(--border); margin: 26px 0; }
 .topic, .page-header, .chapter-title { overflow-wrap: anywhere; }
 main, .layout { overflow-x: hidden; max-width: 100%; }
 
+/* 論文本文から切り出した図 */
+.fig { margin: 16px 0; }
+.fig img { width: 100%; max-width: 580px; display: block; border: 1px solid var(--border);
+  border-radius: 8px; background: #fff; padding: 8px; }
+.fig figcaption { font-size: 0.82rem; color: var(--text-muted); margin-top: 6px; }
+
 @media (max-width: 900px) {
   .layout { flex-direction: column; }
   .sidebar { position: static; height: auto; width: 100%; border-right: none; border-bottom: 1px solid var(--border); }
@@ -427,6 +433,7 @@ main, .layout { overflow-x: hidden; max-width: 100%; }
         <h3>2.1.1 線形モデルとノイズ伝達関数</h3>
 
         <h4>基本ブロックとノイズ源（Fig. 2.1）</h4>
+        <div class="fig"><img src="figures/fig_2_1.png" alt="Fig. 2.1"><figcaption>本文 Fig. 2.1：PLLの線形モデル。ループの各所にノイズ源がぶら下がる。</figcaption></div>
         <div class="tbl-scroll">
         <table class="data-table">
           <thead><tr><th>ブロック</th><th>ノイズ源</th><th>プロファイル</th></tr></thead>
@@ -463,6 +470,8 @@ main, .layout { overflow-x: hidden; max-width: 100%; }
         <p class="note">各ノイズ源のPSDに $|H|^2$ を掛けて足すと出力PN。</p>
 
         <h4>簡略モデルと基本トレードオフ（Fig. 2.3〜2.5）</h4>
+        <div class="fig"><img src="figures/fig_2_3.png" alt="Fig. 2.3"><figcaption>本文 Fig. 2.3：簡略ノイズモデル。基準系ノイズを1個の等価源 $\phi_\text{nEQUIV}$ にまとめ、VCOノイズと2源に。</figcaption></div>
+        <div class="fig"><img src="figures/fig_2_4.png" alt="Fig. 2.4"><figcaption>本文 Fig. 2.4：帯域を変えたPN。(a)1.5MHz=最適、(b)300kHz=VCO暴れ、(c)7.5MHz=基準系が通る。</figcaption></div>
         <ul class="bullets">
           <li>$v_\text{nLF}$ は無視。基準経路・分周器・PDのノイズは伝達関数がどれもLPF型（DC値だけ違う）で、みな白色近似できるので <strong>1個の等価基準換算ノイズ $\phi_\text{nEQUIV}$</strong> にまとめる：<br>
           <span>$\phi_\text{nEQUIV}=\phi_\text{nREF}-\phi_\text{nDIV}+\dfrac{1}{K_\text{PD}}i_\text{nPD}$</span>, &nbsp; <span>$S_\text{nEQUIV}=S_\text{nREF}+S_\text{nDIV}+\dfrac{1}{K_\text{PD}^2}S_\text{nPD}$</span></li>
@@ -479,6 +488,7 @@ main, .layout { overflow-x: hidden; max-width: 100%; }
 
       <article class="topic">
         <h3>2.1.2 安定条件</h3>
+        <div class="fig"><img src="figures/fig_2_6.png" alt="Fig. 2.6"><figcaption>本文 Fig. 2.6：開ループ伝達関数のボード線図。$\omega_\text{UG}$（ゲインが1になる点）は零点 $\omega_z$ と極 $\omega_p$ の間にあり、そこで位相マージンを確保する。</figcaption></div>
         <p>2次LFのとき</p>
         <p>$$H_\text{OL}(s)=\frac{K_\text{PD}K_\text{VCO}}{N_1(C_1+C_2)}\cdot\frac{1+s/\omega_z}{s^2\,(1+s/\omega_p)}$$</p>
         <ul class="bullets">
@@ -496,6 +506,8 @@ main, .layout { overflow-x: hidden; max-width: 100%; }
         <h3>2.2 Fractional-N PLL の量子化ノイズとフラクショナルスパー</h3>
 
         <h4>2.2.1 ΔΣ変調による小数分周</h4>
+        <div class="fig"><img src="figures/fig_2_7.png" alt="Fig. 2.7"><figcaption>本文 Fig. 2.7：÷2.25 を 2,3,2,2… で近似。$\Delta\phi$ の平均はゼロだが常に変動＝量子化ノイズ。</figcaption></div>
+        <div class="fig"><img src="figures/fig_2_8.png" alt="Fig. 2.8"><figcaption>本文 Fig. 2.8：MASH 1-1-1 DSM。1次DSM 3段で3次ノイズシェーピング $(1-z^{-1})^3$。</figcaption></div>
         <ul class="bullets">
           <li>分周器はエッジで駆動される（あるいはILFDは入力＝出力の高調波でしかロックしない）ので <strong>整数分周しかできない</strong>。基準周波数を下げるのは帯域を大きく制限するので筋が悪い。</li>
           <li>MMD（Multi-Modulus Divider）の分周比を時間変化させ、<strong>平均で</strong>目的の小数分周比を得る。例：÷2.25 を 2,3,2,2… で近似。位相誤差 $\Delta\phi$ は $-0.125T_\text{PLL},-0.375T_\text{PLL},0.375T_\text{PLL},0.125T_\text{PLL}$ を巡回し平均ゼロ。</li>
@@ -505,6 +517,7 @@ main, .layout { overflow-x: hidden; max-width: 100%; }
         </ul>
         <div class="callout warn">
           <p class="callout-label">⚠ ノイズシェーピングしても足りない</p>
+        <div class="fig"><img src="figures/fig_2_9.png" alt="Fig. 2.9"><figcaption>本文 Fig. 2.9：小数分周のPN。DSM量子化ノイズ（紫）が乗り、(a)通常帯域で合計が大幅悪化、(b)狭帯域でもVCOが効いて integer-N に負ける。</figcaption></div>
           <p>同じ条件で $N=24.01$ にすると、<strong>fractional-N の最適ジッタ ≈ 290&thinsp;fs（$\omega_\text{UG}\approx300$&thinsp;kHz）</strong>。integer-N の 175&thinsp;fs より大幅に悪い。DSM量子化ノイズを抑えるには帯域をかなり狭める必要があり、そのぶんVCOノイズが増える。<strong>これが Fractional-N の宿痾</strong>で、この論文全体の敵。</p>
         </div>
 
@@ -518,6 +531,7 @@ main, .layout { overflow-x: hidden; max-width: 100%; }
         <h4>2.2.3 先行手法（3系統）</h4>
         <div class="method">
           <h5>系統① ノイズキャンセル（IDAC / DTC）</h5>
+        <div class="fig"><img src="figures/fig_2_12.png" alt="Fig. 2.12"><figcaption>本文 Fig. 2.12：DTCで基準経路の時間をずらし量子化ノイズを時間領域でキャンセル [40-45]。要キャリブレーション。</figcaption></div>
           <ul class="bullets">
             <li>MMD制御列と目標小数分周比の差を積算 → 期待される位相誤差を予測してキャンセル。IDAC は CP 出力で電流を引く [37–39]。DTC は基準経路（またはMMD後の帰還経路）で時間をずらす [40–45]。</li>
             <li>DTC が近年主流：<strong>PD に入る前にキャンセル</strong>できるので、PD は狭い範囲でだけ線形／高精度ならよい。SPD は入力が大きいと被サンプル信号の非線形性で悪化、TDC は広範囲＋高分解能を両立すると大電力。</li>
@@ -610,6 +624,7 @@ main, .layout { overflow-x: hidden; max-width: 100%; }
 
       <article class="topic">
         <h3>3.1.1 帰還系における入力換算ノイズの増幅</h3>
+        <div class="fig"><img src="figures/fig_3_1.png" alt="Fig. 3.1"><figcaption>本文 Fig. 3.1：(a)フィードバック系で入口側ノイズは $1/\beta$ 倍。(b)分周器は $\beta=1/N$（N倍）、ミキサは $\beta=1$（増えない）。</figcaption></div>
         <p>フィードフォワード利得 $A(s)$、帰還利得 $\beta$ の負帰還系（Fig. 3.1a）。開ループ利得 $\beta A(s)\gg1$ のとき、<strong>入力換算ノイズ → 出力の閉ループ利得は $1/\beta$</strong>。</p>
         <ul class="bullets">
           <li>Fractional-N PLL の帰還利得は $\beta=1/N$（分周比の逆数）。→ 入力換算ノイズ（<strong>量子化ノイズ含む</strong>）は $\omega_\text{UG}$ 以下で <strong>$N$ 倍</strong>される。</li>
@@ -624,6 +639,8 @@ main, .layout { overflow-x: hidden; max-width: 100%; }
 
       <article class="topic">
         <h3>3.1.2 ノイズ増幅を避けるHMベース帰還</h3>
+        <div class="fig"><img src="figures/fig_3_2.png" alt="Fig. 3.2"><figcaption>本文 Fig. 3.2：ミキサベースPLLコア。$f_\text{OUT}=f_\text{LO}+f_\text{REF}$。</figcaption></div>
+        <div class="fig"><img src="figures/fig_3_4.png" alt="Fig. 3.4"><figcaption>本文 Fig. 3.4：(a)単純ミキサ=引き込み、(b)HM=$f_\text{OUT}-k f_\text{LO}$、(c)HM＋LO前分周器。</figcaption></div>
         <p>ミキサベースPLLコア（Fig. 3.2）：PD・LF・VCO＋ミキサ＋LO。ミキサ出力は周波数 $f_\text{OUT}-f_\text{LO}$、位相雑音 $\phi_\text{OUT}-\phi_\text{LO}$。帰還＝基準なので <span>$f_\text{OUT}=f_\text{LO}+f_\text{REF}$</span>（出力 ＝ LO ＋ 基準の<strong>和</strong>）。</p>
         <p>$$H_\text{OL}(s)=\frac{K_\text{PD}K_\text{VCO}H_\text{LF}(s)}{s}\quad(\text{従来の式から }N_1\text{ が消えている})$$</p>
         <div class="tbl-scroll">
@@ -648,12 +665,14 @@ main, .layout { overflow-x: hidden; max-width: 100%; }
         <p>HMの作り方：①ミキサ＋周波数逓倍器（マルチ位相生成、電力・複雑さ大）、②<strong>S/H動作ベース</strong>（[59,60,65,66,67]、この論文が採用）。S/H ＝ サンプリング ＋ ホールド。</p>
 
         <h4>サンプリング（Fig. 3.5）</h4>
+        <div class="fig"><img src="figures/fig_3_5.png" alt="Fig. 3.5"><figcaption>本文 Fig. 3.5：サンプリング＝時間領域でインパルス列を掛ける＝周波数領域で $f_\text{SH}$ 間隔のコピー。</figcaption></div>
         <ul class="bullets">
           <li>時間領域：入力波形に周波数 $f_\text{SH}$（＝LO周波数）のインパルス列を掛ける。</li>
           <li>周波数領域：インパルス列は周波数領域でも $f_\text{SH}$ 間隔のインパルス列 → 入力スペクトル（≈単一トーン $f_\text{PLL}$）との<strong>畳み込み</strong> → $\pm(f_\text{PLL}-k f_\text{SH})$、$\pm f_\text{SH}\pm(f_\text{PLL}-3f_\text{SH})$… が生成。例では $f_\text{PLL}\approx3f_\text{SH}$ なので $\pm(f_\text{PLL}-3f_\text{SH})$ が最低周波数。</li>
         </ul>
 
         <h4>ホールド（Fig. 3.6）</h4>
+        <div class="fig"><img src="figures/fig_3_6.png" alt="Fig. 3.6"><figcaption>本文 Fig. 3.6：ホールド＝幅 $T_\text{SH}$ の矩形と畳み込む＝周波数領域で sinc を掛ける（$f_\text{SH}$ 整数倍にノッチ）。</figcaption></div>
         <ul class="bullets">
           <li>時間領域：サンプル値を次のサンプルまで保持＝幅 $T_\text{SH}=1/f_\text{SH}$ の矩形関数との畳み込み。</li>
           <li>周波数領域：矩形 → <strong>sinc関数</strong>との乗算。ノッチは $f_\text{SH}$ の整数倍。</li>
@@ -664,7 +683,8 @@ main, .layout { overflow-x: hidden; max-width: 100%; }
 
       <article class="topic">
         <h3>3.2 Triple-Loop PLL（先行研究）とその課題</h3>
-        <p>HMベースコアで実際に Fractional-N を作った最初期の一つ [65]。<strong>3つのPLL</strong>：メインPLL（HMベース）＋補助 integer-N PLL（HM用LO生成）＋補助 fractional-N PLL（メインの基準生成）。両補助は共通基準。</p>
+        <p>HMベースコアで実際に Fractional-N を作った最初期の一つ [65]。<strong>3つのPLL</strong>
+        <div class="fig"><img src="figures/fig_3_7.png" alt="Fig. 3.7"><figcaption>本文 Fig. 3.7：Triple-Loop PLL [65]。メイン（HM）＋補助integer-N（LO生成）＋補助fractional-N（メイン基準生成）。</figcaption></div>：メインPLL（HMベース）＋補助 integer-N PLL（HM用LO生成）＋補助 fractional-N PLL（メインの基準生成）。両補助は共通基準。</p>
         <p>$$f_\text{OUT}=\left(\frac{kN_1}{M_1}+\frac{N_2+\alpha}{M_2}\right)f_\text{REF}$$</p>
         <p>$f_\text{OUT}$ は $f_\text{INT}$ と $f_\text{FRAC}$ の線形結合 → 補助 integer-N で粗調、補助 fractional-N で微調。</p>
 
@@ -706,6 +726,7 @@ main, .layout { overflow-x: hidden; max-width: 100%; }
         <h3>3.3 Dual-Feedback PLL（提案）</h3>
 
         <h4>3.3.1 提案アーキテクチャ（Fig. 3.9）</h4>
+        <div class="fig"><img src="figures/fig_3_9.png" alt="Fig. 3.9"><figcaption>本文 Fig. 3.9：Dual-Feedback PLL。補助PLLは1個。メインPLLにHM帰還とMMD帰還の2経路。</figcaption></div>
         <ul class="bullets">
           <li>補助PLLは <strong>1つだけ</strong>（integer-N、HM用LO生成＝粗調も担当）。</li>
           <li>代わりに <strong>メインPLLに2つの帰還経路</strong>：①HMベース、②MMDベース。小数チューナブルな信号を「別の補助 fractional-N PLL」ではなく <strong>全体出力＋小数分周器（$\div(N_2+\alpha)$）</strong>で作る。それ以外はTriple-Loopと同じ。</li>
@@ -726,6 +747,7 @@ main, .layout { overflow-x: hidden; max-width: 100%; }
         </div>
 
         <h4>3.3.2 ノイズ伝達関数</h4>
+        <div class="fig"><img src="figures/fig_3_10.png" alt="Fig. 3.10"><figcaption>本文 Fig. 3.10：Dual-Feedback のノイズモデル。2経路の帰還を1ループに統合し、総帰還ゲイン $1-1/(N_2+\alpha)$。</figcaption></div>
         <p>2つの帰還経路を1つに統合してメインPLLを1ループ扱い。HMベース帰還のゲイン ＝ 1、MMDベース帰還のゲイン ＝ $1/(N_2+\alpha)$、<strong>極性が逆</strong>なので負帰還系の総帰還ゲインは <span>$1-\dfrac{1}{N_2+\alpha}$</span>。</p>
         <p>$$H_\text{OLM}(s)=\frac{K_\text{PDM}K_\text{VCOM}H_\text{LFM}(s)}{s}\left(1-\frac{1}{N_2+\alpha}\right)$$</p>
         <div class="tbl-scroll">
@@ -754,6 +776,7 @@ main, .layout { overflow-x: hidden; max-width: 100%; }
         </ul>
 
         <h4>3.4.2 測定結果</h4>
+        <div class="fig"><img src="figures/fig_3_14.png" alt="Fig. 3.14"><figcaption>本文 Fig. 3.14：measured PN。integerモード（赤）とfractionalモード（青）の差＝DSM量子化ノイズ寄与。Dual-Feedbackではほぼ無視できる。</figcaption></div>
         <ul class="bullets">
           <li><strong>Fig. 3.13（sim＋calc）</strong>：$f_\text{OUT}=3.588$&thinsp;GHz、ノイズシェーピング 77.97&thinsp;MHz、帯域 800&thinsp;kHz。従来は MMD ÷46.01983。Dual-Feedback は MMD ÷46.01983 ＋ 4次HM（LO 877.5&thinsp;MHz）。→ <strong>量子化ノイズ抑圧が「分周比 − 1 ＝ 45.02 ≈ 33&thinsp;dB」改善</strong>。低域の calc/sim のわずかなずれはループ非線形のノイズフォールディング（総ジッタへの影響は小）。</li>
           <li><strong>Fig. 3.14（測定）</strong>：integer モード（÷46）と fractional モード（÷46＋$2^{-6}$）のPNの差 ＝ DSM量子化ノイズ寄与。従来なら大きな山になるはずが、<strong>Dual-Feedback ではほぼ無視できる</strong> → 増幅回避で量子化ノイズ抑圧に成功。</li>
@@ -800,6 +823,8 @@ main, .layout { overflow-x: hidden; max-width: 100%; }
         </ul>
 
         <h4>3.5.3–3.5.4 最適設計の導出と結果</h4>
+        <div class="fig"><img src="figures/fig_3_20.png" alt="Fig. 3.20"><figcaption>本文 Fig. 3.20：ジッタ-電力パレート（VCO/DTC電力のみ）。Dual-FB（緑）とDTC（黄）は従来frac-N（青）より明確に良い。</figcaption></div>
+        <div class="fig"><img src="figures/fig_3_22.png" alt="Fig. 3.22"><figcaption>本文 Fig. 3.22：PD/HM電力込みの精密版。FoM等高線とwireline(150fs)/wireless(200fs)要求線つき。</figcaption></div>
         <ul class="bullets">
           <li>解析的に解くのは複雑（変数多）→ <strong>遺伝的アルゴリズム（GA）</strong>で数値的にジッタ-電力パレートを得て、傾向を粗い計算で説明する<strong>ハイブリッド手法</strong>。GA：個体数600、300世代。帯域 10kHz〜（基準の40%）、VCO電力 100µW〜1W など。「1点のFoM最適化」ではなく<strong>曲線</strong>で比べるのがミソ（実務では「ジッタ100fs必須」なら200fsのPLLはFoMが良くても失格）。</li>
           <li><strong>Fig. 3.20</strong>：
@@ -928,6 +953,7 @@ main, .layout { overflow-x: hidden; max-width: 100%; }
 
       <article class="topic">
         <h3>4.1 問題設定：S/H動作が生むオフセットスパー</h3>
+        <div class="fig"><img src="figures/fig_4_1.png" alt="Fig. 4.1"><figcaption>本文 Fig. 4.1：HMベースPLLのオフセットスパー概観。Type-A（高周波、post-LPFで対策）とType-B（搬送波近傍、pre-LPFで対策）。</figcaption></div>
         <p>HMをS/Hで実現する代償として、HM出力に2種類の不要トーンが出る（Fig. 4.1）。先行研究は発生機構の説明もLPF設計指針も示していない。この章の貢献は<strong>発生機構の解明・位置と振幅の閉形式導出・LPF設計指針</strong>。</p>
         <div class="tbl-scroll">
         <table class="data-table">
@@ -944,6 +970,7 @@ main, .layout { overflow-x: hidden; max-width: 100%; }
         <h3>4.2 背景理論</h3>
 
         <h4>4.2.1 PFD/CP の位相サンプリング動作</h4>
+        <div class="fig"><img src="figures/fig_4_2.png" alt="Fig. 4.2"><figcaption>本文 Fig. 4.2：PFD/CPは立ち上がりエッジでのみ動作＝位相差にインパルス列（$f_\text{HM}$）を掛ける＝スペクトルが $f_\text{HM}$ 間隔でコピー。</figcaption></div>
         <ul class="bullets">
           <li>PFD/CP は位相差を<strong>連続的に</strong>出すのではなく、入力の立ち上がりエッジでのみ動作。CPの電流パルスは1基準周期よりずっと狭い → PFD/CP は「真の（連続時間の）入力位相差」に<strong>周波数 $f_\text{HM}$（＝PD入力周波数＝HM出力周波数）のインパルス列を掛ける</strong>ブロックとみなせる。</li>
           <li>周波数領域：入力位相差スペクトルが $f_\text{HM}$ 間隔のインパルス列と畳み込まれ、$f_\text{HM}$ とその高調波に<strong>コピー</strong>が現れる。</li>
@@ -951,6 +978,7 @@ main, .layout { overflow-x: hidden; max-width: 100%; }
         </ul>
 
         <h4>4.2.2 信号スペクトルとその位相スペクトルの関係</h4>
+        <div class="fig"><img src="figures/fig_4_3.png" alt="Fig. 4.3"><figcaption>本文 Fig. 4.3：信号スペクトル＝PNスペクトルを搬送波の両側にコピーしたもの。電圧領域↔位相領域の変換に使う。</figcaption></div>
         <p>$V(t)=A\sin(\omega_c t+\phi_n(t))$、$|\phi_n|\ll1$ とすると</p>
         <p>$$V(t)\approx A[\sin(\omega_c t)+\phi_n(t)\cos(\omega_c t)]$$</p>
         <p>$\phi_n(t)=A_n\sin(\omega_n t)$ の1成分に注目すると</p>
@@ -962,6 +990,7 @@ main, .layout { overflow-x: hidden; max-width: 100%; }
         <h3>4.3 不要トーンの発生機構</h3>
 
         <h4>4.3.1 Type-A スパー（高周波トーン）</h4>
+        <div class="fig"><img src="figures/fig_4_4.png" alt="Fig. 4.4"><figcaption>本文 Fig. 4.4：Type-A の発生機構。sincのノッチから $\pm f_\text{HM}$ ずれた高周波トーン → 位相サンプリングで低周波へエイリアス。</figcaption></div>
         <ul class="bullets">
           <li>ホールドの sinc のノッチは $f_\text{SH}$ の整数倍。だが高周波トーンは $\pm f_\text{SH}\pm f_\text{HM}$、$\pm2f_\text{SH}\pm f_\text{HM}$… ＝ <strong>ノッチから $\pm f_\text{HM}$ ずれた位置</strong>にある → 完全には消えない。</li>
           <li>位相領域に変換すると、これらは <strong>$f_\text{SH}$ の整数倍</strong>のスパーになる。PFD/CP の位相サンプリング（$f_\text{HM}$）で低周波へエイリアス。$f_\text{SH}$ が $f_\text{HM}$ の整数倍に近いと、スパーがごく低周波に出て PLL の LPF で落ちない。</li>
@@ -969,6 +998,7 @@ main, .layout { overflow-x: hidden; max-width: 100%; }
         </ul>
 
         <h4>4.3.2 Type-B スパー（低周波トーン）</h4>
+        <div class="fig"><img src="figures/fig_4_5.png" alt="Fig. 4.5"><figcaption>本文 Fig. 4.5：Type-B。$f_\text{PLL}$ の高調波と $f_\text{SH}$ の高調波の相互作用で $f_\text{SH}-n f_\text{HM}$ が搬送波近くへ。</figcaption></div>
         <ul class="bullets">
           <li>S/H入力（PLL出力）の<strong>高次高調波</strong>を考える必要がある（Fig. 4.5、$k=3$ の例）。HM出力には：望みの $f_\text{HM}=f_\text{PLL}-3f_\text{SH}$、Type-Aの元になる $\pm(f_\text{SH}-f_\text{HM})$ 等、$f_\text{HM}$ の整数倍（無害、DCへ落ちる）、そして<strong>$f_\text{PLL}$ の高調波 と $f_\text{SH}$ の高調波の相互作用</strong>。</li>
           <li>例：$11f_\text{PLL}$ と $34f_\text{SH}$ → $34f_\text{SH}-11f_\text{PLL}=f_\text{SH}-11f_\text{HM}$。高次になるほどトーンが低周波に寄る。$f_\text{SH}$ がたまたま $12f_\text{HM}$ に近いと $f_\text{SH}-11f_\text{HM}\approx f_\text{HM}$ ＝ <strong>望みの信号のすぐ近く</strong>に来て、後段LPFで落とせない。</li>
@@ -985,6 +1015,7 @@ main, .layout { overflow-x: hidden; max-width: 100%; }
         <p>＝<strong>$f_\text{SH}$ と、それに最も近い $f_\text{HM}$ の整数倍との差</strong>。$f_\text{SH}$ が $f_\text{HM}$ の整数倍にごく近いとスパーは低周波に出て PLL の LPF で落ちない。高調波（$2\Delta f$, $3\Delta f$…）も出るが基本波より小さい。</p>
 
         <h4>4.4.2 Type-A の振幅</h4>
+        <div class="fig"><img src="figures/fig_4_7.png" alt="Fig. 4.7"><figcaption>本文 Fig. 4.7：sincのノッチ拡大図。$f_\text{SH}$↓・$f_\text{HM}$↑ でトーンがノッチから遠く・sincが急峻になり減衰が浅い。</figcaption></div>
         <p>陰的 sinc 関数 $F_\text{SINC}(f,f_\text{SH})\equiv\dfrac{\sin(\pi f/f_\text{SH})}{\pi f/f_\text{SH}}$ を定義。</p>
         <p>$$U_A[\text{dBc}]=10\log\!\left[\frac{|H_\text{PLL,cl}(\Delta f)|^2\big(F_\text{SINC}^2(f_\text{HM}-f_\text{SH},f_\text{SH})+F_\text{SINC}^2(f_\text{HM}+f_\text{SH},f_\text{SH})\big)}{2\,F_\text{SINC}^2(f_\text{HM},f_\text{SH})}\right]$$</p>
         <ul class="bullets">
@@ -993,6 +1024,7 @@ main, .layout { overflow-x: hidden; max-width: 100%; }
         </ul>
 
         <h4>4.4.3 Type-B の振幅</h4>
+        <div class="fig"><img src="figures/fig_4_8.png" alt="Fig. 4.8"><figcaption>本文 Fig. 4.8：HM出力の概念スペクトル。(a)$f_\text{SH}\approx$偶数倍 $f_\text{HM}$、(b)奇数倍。矩形波の奇数次高調波の扱いが変わる。</figcaption></div>
         <p>sinc の影響は小さいが、S/H入力の高調波組成と post-LPF に依存。矩形波（奇数次高調波のみ）を例に：</p>
         <ul class="bullets">
           <li><strong>$f_\text{SH}\approx2m\,f_\text{HM}$（偶数倍）</strong>：$2m-1$ 次と $2m+1$ 次が搬送波の両側に等距離・ほぼ同振幅。フーリエ級数で $2m+1$ 次の振幅は $1/(2m+1)$。
@@ -1026,6 +1058,7 @@ main, .layout { overflow-x: hidden; max-width: 100%; }
         <p><strong>最悪ケース</strong>：$f_\text{SH}$ が最小値付近・$f_\text{HM}$ が最大値付近・$f_\text{SH}$ が $f_\text{HM}$ の整数倍に近い・$\Delta f$ が PLL帯域より十分低い。Type-B の高調波組成は次数が上がるほど小さくなるので、最悪ケースは Type-A と同じとみなせる。</p>
         <div class="callout">
           <p class="callout-label">具体例（Fig. 4.22）</p>
+        <div class="fig"><img src="figures/fig_4_22.png" alt="Fig. 4.22"><figcaption>本文 Fig. 4.22：設計フロー実証のモデル。HM（S/H＋pre/post LPF）は回路レベル、他はビヘイビア。</figcaption></div>
           <p>HM（S/H＋pre/post LPF）は回路レベル、他はビヘイビアモデル。帯域2MHz、PFD/CP入力60–80MHz、HM LO 800–900MHz（デューティ $D=0.125$）、$k=3$、1段目S/HのRC帯域380MHz、出力2.46–2.78GHz（正弦波、高調波はHM入力バッファ由来）、65nm。<br>
           最悪ケース $f_\text{SH}=800.5$&thinsp;MHz, $f_\text{HM}=80$&thinsp;MHz。目標オフセットスパー −60&thinsp;dBc → Type-A/Bを個別に −66&thinsp;dBc 以下に。<br>
           <strong>Type-A</strong>：post-LPF無しの減衰（sinc＋$D/(2\pi RC)$ の LPF）≈ −31&thinsp;dB → post-LPF で $f_\text{SH}$ に追加35&thinsp;dB必要。<br>
@@ -1126,6 +1159,7 @@ main, .layout { overflow-x: hidden; max-width: 100%; }
         <h3>5.2 キャリブレーション不要の先行手法2つと、その限界</h3>
 
         <h4>5.2.1 HMベース帰還（Dual-Feedback, 3章）の限界＝ノイズシェーピング周波数の頭打ち</h4>
+        <div class="fig"><img src="figures/fig_5_1.png" alt="Fig. 5.1"><figcaption>本文 Fig. 5.1：Dual-Feedback のノイズシェーピング周波数の限界。$f_\text{HM}$ が $f_\text{SH}$ に近いとType-Aと望みの信号を分離できない。</figcaption></div>
         <ul class="bullets">
           <li>HM出力には Type-A トーン（$f_\text{LO}\pm f_\text{HM}$ 付近）がある。<strong>$f_\text{HM}$ が $f_\text{SH}$ に対して十分小さくない</strong>と、望みの信号を減衰させずに不要トーンだけ落とすのが困難。</li>
           <li>インダクタレス実装では $f_\text{SH}$ を大きくしにくい（リングVCO の FoM は高周波で段数が減って劣化）。→ $f_\text{HM}$ も大きくできない。</li>
@@ -1133,6 +1167,7 @@ main, .layout { overflow-x: hidden; max-width: 100%; }
         </ul>
 
         <h4>5.2.2 分割帰還分周 ＋ Nested-PLL 位相領域LPF（PDLPF）[79]</h4>
+        <div class="fig"><img src="figures/fig_5_2.png" alt="Fig. 5.2"><figcaption>本文 Fig. 5.2：分割帰還分周でノイズシェーピング周波数↑＋Nested PLL（PDLPF）をアンチエイリアスに [79]。</figcaption></div>
         <ul class="bullets">
           <li>帰還分周器を2分割して <strong>ノイズシェーピング周波数を上げる</strong>＋ PDLPF（Nested PLL）を<strong>アンチエイリアスフィルタ</strong>として使う（PLLは入力→出力でLPF特性なので、2段目分周器の前で高周波量子化ノイズを落としエイリアスを防ぐ）。[51] より古く、分割帰還分周の元祖。</li>
           <li><strong>限界①</strong>：Nested PLL は<strong>メインPLLの開ループ伝達関数に影響する</strong>（[55–58] のFIRと違う点）。Nested PLL 帯域を自由に選べず、位相マージン確保のためメインPLL帯域より十分広くする必要（[79]で ±10%変動込み 2.5倍、実用5〜6倍）。一方アンチエイリアスには狭い帯域が要る → <strong>結局メインPLL帯域が制限される</strong>（リングVCO PN 抑圧のため広げたかったのに）。</li>
@@ -1145,6 +1180,7 @@ main, .layout { overflow-x: hidden; max-width: 100%; }
         <p>アイデアはシンプル：2つの先行手法を組み合わせるだけ。だが組み合わせることで<strong>両者の利点を保ちつつ両者の欠点を消す</strong>。</p>
 
         <h4>5.3.1 提案アーキテクチャ（Fig. 5.3）の利点</h4>
+        <div class="fig"><img src="figures/fig_5_3.png" alt="Fig. 5.3"><figcaption>本文 Fig. 5.3：提案：分割帰還分周＋PDLPF を Dual-Feedback の中に。Nested PLL は安定性に効かず帯域自由。</figcaption></div>
         <ul class="bullets">
           <li>ノイズ増幅の回避（Dual-Feedback の特性）。</li>
           <li>ノイズシェーピング周波数を上げられる（HMの動作に縛られない）。</li>
@@ -1156,6 +1192,8 @@ main, .layout { overflow-x: hidden; max-width: 100%; }
         <p class="note">$f_\text{DSM}=N_2 f_\text{HM}$ ＝ ノイズシェーピング周波数が HM出力周波数の $N_2$ 倍 → Dual-Feedback の頭打ちを解消。</p>
 
         <h4>5.3.2 ノイズ・安定性解析</h4>
+        <div class="fig"><img src="figures/fig_5_4.png" alt="Fig. 5.4"><figcaption>本文 Fig. 5.4：提案のノイズモデル。Nested PLL は閉ループ伝達関数 $G_\text{CL,nest}(s)$ の黒箱として表現。</figcaption></div>
+        <div class="fig"><img src="figures/fig_5_5.png" alt="Fig. 5.5"><figcaption>本文 Fig. 5.5：Nested PLL帯域 vs メインPLL位相マージン。従来（青）は不安定化、提案（赤）は一定。</figcaption></div>
         <p>$$H_\text{OL}(s)=\frac{K_\text{PD}K_\text{VCO}H_\text{LF}(s)}{s}\left(1-\frac{G_\text{CL,nest}(s)}{N_1N_2}\right)$$</p>
         <ul class="bullets">
           <li>$|G_\text{CL,nest}(s)|\le1$（DCゲイン1）なので $1-\dfrac{G_\text{CL,nest}}{N_1N_2}\approx1$ → <strong>$H_\text{OL}(s)\approx K_\text{PD}K_\text{VCO}H_\text{LF}(s)/s$、Nested PLL 帯域は安定性にほぼ無関係</strong>。</li>
@@ -1203,6 +1241,8 @@ main, .layout { overflow-x: hidden; max-width: 100%; }
         </ul>
 
         <h4>5.4.2 測定結果</h4>
+        <div class="fig"><img src="figures/fig_5_16.png" alt="Fig. 5.16"><figcaption>本文 Fig. 5.16：measured PN。integer/fractionalの差＝DSM寄与は無視レベル（従来3構成では大きな山）。</figcaption></div>
+        <div class="fig"><img src="figures/fig_5_17.png" alt="Fig. 5.17"><figcaption>本文 Fig. 5.17：IPN内訳：メインVCO 42%、外部PLL 54%、Nested PLL 3%、HM 1%、DSM 0%。</figcaption></div>
         <ul class="bullets">
           <li><strong>Fig. 5.16</strong>：RMSジッタ integer 838&thinsp;fs / fractional 869&thinsp;fs（1k–100MHz）。DSM寄与は無視レベル（従来3構成では大きな山になるはずが観測されない）。チューニングレンジ全体で最悪ジッタ 1.03&thinsp;ps、FoM変動 ≈2&thinsp;dB。</li>
           <li><strong>Fig. 5.17（IPN内訳）</strong>：メインVCO 42%、外部PLL 54%、Nested PLL 3%、HM 1%、メインCP 0%、DSM 0%。→ <strong>Nested PLL・DSM は合計4%未満</strong>。メインCPノイズもHM帰還のDCゲイン1で無視レベル。</li>
@@ -1217,6 +1257,7 @@ main, .layout { overflow-x: hidden; max-width: 100%; }
 
       <article class="topic">
         <h3>5.5 解析的性能評価</h3>
+        <div class="fig"><img src="figures/fig_5_23.png" alt="Fig. 5.23"><figcaption>本文 Fig. 5.23：リングVCO想定のジッタ-電力パレート。ここでは両Dual-FBがDTCベースに負ける（帯域が広く整形量子化ノイズが効くため）。</figcaption></div>
         <p>3.5節と同枠組み、ただし<strong>リングVCO（$Q=1$）</strong>を仮定し、分割帰還分周（2段目 ÷6、ノイズシェーピング 618MHz）＋PDLPF を Dual-Feedback に入れたケースを追加。</p>
         <ul class="bullets">
           <li><strong>Fig. 5.23</strong>：DTCベースと両 Dual-Feedback は従来 fractional-N より大幅に良く、integer-N より悪い。Dual-Feedback は分割分周＋PDLPF を足すと改善（ただし低電力・高ジッタ側は3つのVCOの最低電力で頭打ち）。</li>
@@ -1310,12 +1351,14 @@ main, .layout { overflow-x: hidden; max-width: 100%; }
         <h3>6.2 従来のノイズ抑圧手法</h3>
 
         <h4>6.2.1 広帯域PLL</h4>
+        <div class="fig"><img src="figures/fig_6_1.png" alt="Fig. 6.1"><figcaption>本文 Fig. 6.1：広帯域の外部PLL＋メインPLLのLPFで外部VCO PNを抑える。外部帯域≫メイン帯域が要る。</figcaption></div>
         <ul class="bullets">
           <li>メインPLL・VCO は最適帯域でジッタ要求を満たし、外部PLL は<strong>低電力・広帯域</strong>にする。外部PLL PN はメインPLLでLPFされるので、外部帯域 ≫ メイン帯域 なら外部VCO PN を無視レベルにできる。</li>
           <li>限界：高周波基準はコスト高。HMベースの周波数プランに難（$f_\text{OUT}=k f_\text{SH}+f_\text{HM}$、$f_\text{REF}$ が高いと $f_\text{HM}$ が広範囲をカバーせねばならない）。$f_\text{BW}\le0.5f_\text{REF}$ の壁。$f_\text{BW}/f_\text{REF}$ が大きいとプロセス変動で peaking / 不安定。広帯域は type-I にせざるを得ず（Gardner's limit回避）、type-I は DC に1極だけ＝低周波VCO PN 抑圧が非効率（HPF が 20&thinsp;dB/dec）。積分パス追加で改善できるが比例パスよりゲインを小さくせねばならず限定的。</li>
         </ul>
 
         <h4>6.2.2 PLL後段のVCDLベース補正</h4>
+        <div class="fig"><img src="figures/fig_6_2.png" alt="Fig. 6.2"><figcaption>本文 Fig. 6.2：VCDL利用。(a)フィードバック型 [82]、(b)フィードフォワード型 [83]。</figcaption></div>
         <p>狭〜中帯域PLLで安定な信号を作り、その出力に <strong>VCDL（電圧制御遅延線）</strong> を付けてVCO PN を追加抑圧。2形態：</p>
         <div class="tbl-scroll">
         <table class="data-table">
@@ -1335,6 +1378,7 @@ main, .layout { overflow-x: hidden; max-width: 100%; }
         <h3>6.3 提案：電圧領域フィードフォワード位相雑音キャンセル</h3>
 
         <h4>6.3.1 コンセプト（Fig. 6.5）</h4>
+        <div class="fig"><img src="figures/fig_6_5.png" alt="Fig. 6.5"><figcaption>本文 Fig. 6.5：提案の基本概念。外部PLLのPD出力を電圧のままメインPLLのPD出力に足し込む。高速VCDL不要。</figcaption></div>
         <ul class="bullets">
           <li>フィードフォワード型VCDLと同様に、外部PLLのPD出力（＝PLL出力PN の情報を持つ）を取る。ただしVCDLを制御するのではなく、<strong>そのままメインPLLのPD出力に足し込む</strong> → 外部VCO の PN成分を打ち消す。</li>
           <li><strong>高速VCDLが不要</strong>。理由：カスケードPLLでは外部PLLの出力PN成分が<strong>2段目PDの出力</strong>に現れ、そこでは信号がDCへダウンコンバートされて<strong>低周波</strong>になっている → 電圧領域でそのまま加算処理できる。single-loop PLLの出力は最終信号（時間領域）なので、キャンセルには時間領域＝VCDLが要る。</li>
@@ -1342,6 +1386,7 @@ main, .layout { overflow-x: hidden; max-width: 100%; }
         </ul>
 
         <h4>6.3.2 ノイズキャンセル解析（Fig. 6.6）</h4>
+        <div class="fig"><img src="figures/fig_6_6.png" alt="Fig. 6.6"><figcaption>本文 Fig. 6.6：フィードフォワード雑音キャンセルの線形モデル。$K_\text{FF}$ がキャンセル経路のゲイン。</figcaption></div>
         <p>$K_\text{FF}$ ＝ フィードフォワード経路のゲイン。$H_\text{OL1}$, $H_\text{OLM}$ は Dual-Feedback と同じ。メイン系ノイズ（$\phi_\text{nVCOM}$, $\phi_\text{nEQUIVM}$, $\phi_\text{nDSM}$）の伝達関数はキャンセル無し版と不変（量子化ノイズ・メイン入力換算PN は同じ増幅回避）。</p>
         <p><strong>外部VCO PN → 出力</strong>：</p>
         <p>$$H_\text{VCO1,OUT}(s)=\left(\frac{kK_\text{PDM}}{M_1}-\frac{K_\text{FF}K_\text{PD1}}{N_1}\right)\frac{1}{1+H_\text{OL1}(s)}\cdot\frac{1}{K_\text{PDM}}\cdot\frac{H_\text{OLM}(s)}{1+H_\text{OLM}(s)}$$</p>
@@ -1351,6 +1396,7 @@ main, .layout { overflow-x: hidden; max-width: 100%; }
         <p>＝キャンセル無し版と同じ、ただし<strong>外部PLLからのLPFが無い</strong>。→ <strong>キャンセルは「フィードフォワードのタップ点（PD出力）より後」のブロック（外部VCO・外部LF）にだけ効き、それより前（PD自体・基準・分周器）には効かない</strong>。</p>
 
         <h4>6.3.3 ゲイン誤差の影響</h4>
+        <div class="fig"><img src="figures/fig_6_7.png" alt="Fig. 6.7"><figcaption>本文 Fig. 6.7：ゲイン誤差ごとの外部VCO向け等価HPF特性。誤差10%で低域が −20dB飽和。peakingは出ない。</figcaption></div>
         <ul class="bullets">
           <li>Fig. 6.7：完全整合なら理想HPF（DC完全抑圧、カットオフ ≈40MHz ＝ $f_\text{REF}/2$、$f_\text{REF}=80$MHz）。ゲイン誤差10%だと低域が $20\log(0.1)=-20$&thinsp;dB で飽和。<strong>ただしフィードフォワードなので大きなゲイン誤差でも peaking は出ない</strong>。</li>
           <li>Fig. 6.8：ゲイン誤差 &lt;20% なら出力PNへの影響は小。Fig. 6.10：<strong>±20% ゲイン誤差でジッタ劣化は約3%</strong>。設計目標は ±20%。</li>
@@ -1360,6 +1406,8 @@ main, .layout { overflow-x: hidden; max-width: 100%; }
       <article class="topic">
         <h3>6.4 実装と測定（7GHz試作）</h3>
         <h4>6.4.1 実装詳細（Fig. 6.11）</h4>
+        <div class="fig"><img src="figures/fig_6_11.png" alt="Fig. 6.11"><figcaption>本文 Fig. 6.11：実装詳細。外部PLL(type-II SPD)→ゲイン段(2段OTA＋抵抗帰還)→メインPLLのXOR-PD出力と抵抗加算。</figcaption></div>
+        <div class="fig"><img src="figures/fig_6_13.png" alt="Fig. 6.13"><figcaption>本文 Fig. 6.13：(a)提案LF（閉ループアンプ、受動素子だけで特性決定）、(b)従来 gm セル型（$G_m$ 依存でPVTに弱い）。</figcaption></div>
         <ul class="bullets">
           <li>TSMC 65nm。外部PLL：type-II SPDベース（LFに工夫）。メイン・外部の LC-VCO は8の字インダクタで磁気結合低減。外部PLL用に<strong>リングVCOも実装</strong>（1段目のPN寄与が大きい場合でも効くことを実証するため）。</li>
           <li>SPD出力 → ゲイン段（2段OTA＋抵抗帰還で正確なゲイン）→ 抵抗網でメインPLLのPD出力と加算。メインPLL：3次HM、type-I（XOR-PD＋2段RC LF、[53]類似）。XOR-PD前の ÷2 は MMD/HM出力の立ち上がりを立ち上がり＋立ち下がりに変換するため（XOR-PDは両エッジに反応）。</li>
@@ -1379,6 +1427,7 @@ main, .layout { overflow-x: hidden; max-width: 100%; }
         <p class="note">デジタル実装（TDC/BBPD＋デジタルループ）ならフィードフォワードゲイン変動を気にせず加算も容易だが、デジタルPLL固有の課題（PD量子化ノイズ、リミットサイクル）もある。今回はコンセプト実証なのでアナログ寄りの安全策をとった。</p>
 
         <h4>6.4.2 測定結果</h4>
+        <div class="fig"><img src="figures/fig_6_19.png" alt="Fig. 6.19"><figcaption>本文 Fig. 6.19：キャンセルOFF（赤）125fs → ON（青）106fs。÷4出力なので実出力は+12dB。</figcaption></div>
         <ul class="bullets">
           <li>電力（Fig. 6.16）：LC-VCO 外部PLL の場合 合計12.58&thinsp;mW、外部VCO は 1.50&thinsp;mW（12%）のみ。リングVCO 外部PLL の場合 合計22.26&thinsp;mW（外部VCO 11.18&thinsp;mW）。</li>
           <li>Fig. 6.17：外部PLL（LC-VCO）ジッタ194&thinsp;fs、LC-VCO −106&thinsp;dBc/Hz @4.24GHz 1MHz（FoM −177&thinsp;dB）。Fig. 6.18：外部PLL（リングVCO）ジッタ783&thinsp;fs。</li>
@@ -1482,24 +1531,28 @@ main, .layout { overflow-x: hidden; max-width: 100%; }
         <h3>7.2 将来展望（＝修論・後続研究のネタ）</h3>
 
         <h4>① mm-wave 周波数シンセ ― Dual-Feed-Forward アーキテクチャ</h4>
+        <div class="fig"><img src="figures/fig_7_1.png" alt="Fig. 7.1"><figcaption>本文 Fig. 7.1：Dual-Feed-Forward [69,88]。メインPLLの帰還経路に分周器が不要 → mm-waveに有利。</figcaption></div>
         <ul class="bullets">
           <li>Dual-Feedback と似た量子化ノイズ抑圧を持つ別構成 [69,88]（Fig. 7.1）。<strong>メインPLLの帰還経路に分周器が不要</strong> → mm-wave に有利（高周波分周器は難しい。ILFD は面積大・ロックレンジ狭・分周比のプログラマビリティ低、prescaler カスケードで悪化）。HM は出力を既に基準周波数までダウンコンバートしているのでLCタンクが要らず、ロックレンジ・可変性を損なわない。</li>
           <li>使い分け：メインPLL出力の方が高周波なら Dual-Feedback が有利、外部PLLの方が高周波なら Dual-Feed-Forward が有利。</li>
         </ul>
 
         <h4>② スケーリングフレンドリーなHM ― N-path S/H</h4>
+        <div class="fig"><img src="figures/fig_7_2.png" alt="Fig. 7.2"><figcaption>本文 Fig. 7.2：N-path S/H案。N段リングVCOでN相クロック生成、post-LPFを大幅簡略化。</figcaption></div>
         <ul class="bullets">
           <li>HM の<strong>post-S/H LPF がボトルネック</strong>（LO周波数付近のトーンを扱うので高次・狭帯域・大面積）。pre-S/H LPF は高次高調波を落とすだけなので低次・広帯域・小面積で済む。</li>
           <li>無線受信機の harmonic rejection で使われる <strong>N-path サンプリング</strong> [67,89–92] ＋ 大幅簡略化した LPF で置き換える案（Fig. 7.2）。N相クロックは外部PLLをN段リングVCOにして生成、メインPLLもN段リングVCOにして入力位相をシフト（S/H後の位相シフトより簡単）。HMベース帰還は無線受信機の信号経路に似ているので、無線回路の工夫が参考になる。</li>
         </ul>
 
         <h4>③ 応用 ― マルチチャネル</h4>
+        <div class="fig"><img src="figures/fig_7_3.png" alt="Fig. 7.3"><figcaption>本文 Fig. 7.3：マルチチャネルで外部PLLを1つ共有。2段目がfractional-Nなので各chを個別微調整。</figcaption></div>
         <ul class="bullets">
           <li>HMベースPLLは「カスケードPLL」で、しかも <strong>1段目 integer-N ／ 2段目 fractional-N</strong>（[93,75,94,95] とは逆）。マルチチャネル有線トランシーバや無線フェーズドアレイでは、チャネルごとに個別（個別可変）クロックが要る。</li>
           <li>Fig. 7.3：全チャネルで<strong>1つの外部PLLを共有</strong>。外部PLLに大電力を注いでもチャネル数で割れば1chあたりは軽い。2段目が fractional-N なので各chの周波数を細かく個別調整できる。</li>
         </ul>
 
         <h4>④ 他手法との組み合わせ ― Dual-Feedback ＋ DTC</h4>
+        <div class="fig"><img src="figures/fig_7_5.png" alt="Fig. 7.5"><figcaption>本文 Fig. 7.5：Dual-Feedback＋DTC のジッタ-電力（黒）。単体（緑=Dual-FB, 黄=DTC）より良い。</figcaption></div>
         <ul class="bullets">
           <li>Dual-Feedback の中に DTC を入れる（Fig. 7.4）。DTC の熱雑音・量子化ノイズも増幅回避で乗らない → Fig. 7.5：<strong>Dual-Feedback＋DTC は Dual-Feedback 単体・DTC単体より良いジッタ-電力</strong>。残るオーバーヘッドは外部VCO（6章のFF雑音キャンセルや広帯域外部PLLで抑えられる）。</li>
           <li>難点：キャリブレーション不要という利点を失う（ただし非線形起因スパーは増幅されないので線形性キャリブレーションは省ける可能性）。</li>

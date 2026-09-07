@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>長田論文を読む前の基礎知識まとめ</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.css">
+<style>
+:root {
+  --bg:#f6f5f2; --bg-card:#fff; --text:#2b2a28; --text-muted:#6b6862; --border:#e4e1da;
+  --accent:#3b6ea5; --accent-soft:#eaf1f9;
+  --callout-bg:#fbf7ec; --callout-border:#e8dcb0;
+  --casual-bg:#f1f0fb; --casual-border:#d9d6f2;
+  --warn-bg:#fdeee9; --warn-border:#f0c9ba;
+  --ana-bg:#eef6f0; --ana-border:#c4e2cd;
+  --code-bg:#f0efec; --shadow:0 1px 3px rgba(0,0,0,.06);
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg:#1c1b19; --bg-card:#262523; --text:#eae8e3; --text-muted:#a39e93; --border:#3a3835;
+    --accent:#7fb0e0; --accent-soft:#22344a;
+    --callout-bg:#33301f; --callout-border:#57502c;
+    --casual-bg:#2a2840; --casual-border:#423e63;
+    --warn-bg:#3a2820; --warn-border:#6b4636;
+    --ana-bg:#1e3329; --ana-border:#2f5140;
+    --code-bg:#302e2b; --shadow:0 1px 3px rgba(0,0,0,.3);
+  }
+}
+* { box-sizing:border-box; }
+body { margin:0; background:var(--bg); color:var(--text);
+  font-family:"Hiragino Sans","Yu Gothic","Segoe UI",system-ui,sans-serif; line-height:1.85; }
+.layout { display:flex; max-width:1180px; margin:0 auto; align-items:flex-start; }
+.sidebar { position:sticky; top:0; flex:0 0 230px; height:100vh; overflow-y:auto;
+  padding:26px 16px; border-right:1px solid var(--border); font-size:.88rem; }
+.sidebar h1 { font-size:1rem; margin:0 0 4px; }
+.sidebar .src { font-size:.76rem; color:var(--text-muted); margin:0 0 18px; }
+.sidebar a { display:block; padding:5px 9px; margin:1px 0; border-radius:6px;
+  color:var(--text); text-decoration:none; font-size:.85rem; }
+.sidebar a:hover { background:var(--accent-soft); }
+main { flex:1; min-width:0; padding:30px 44px 100px; overflow-x:hidden; max-width:100%; }
+.page-header { margin-bottom:34px; padding-bottom:18px; border-bottom:1px solid var(--border); }
+.page-header h1 { margin:0 0 10px; font-size:1.5rem; line-height:1.4; }
+.page-header p { margin:6px 0; color:var(--text-muted); }
+.sec { margin-bottom:44px; scroll-margin-top:16px; }
+.sec > h2 { font-size:1.28rem; padding-bottom:9px; border-bottom:2px solid var(--accent); margin-bottom:22px; }
+.card { background:var(--bg-card); border:1px solid var(--border); border-radius:12px;
+  padding:22px 26px; margin-bottom:20px; box-shadow:var(--shadow); overflow-wrap:anywhere; }
+.card h3 { margin-top:0; font-size:1.1rem; color:var(--accent); }
+.card h4 { font-size:.98rem; margin:20px 0 8px; }
+ul { padding-left:1.3em; margin:8px 0 14px; }
+li { margin-bottom:5px; }
+.note { color:var(--text-muted); font-size:.92rem; }
+.callout { background:var(--callout-bg); border:1px solid var(--callout-border);
+  border-radius:10px; padding:13px 17px; margin:12px 0 18px; }
+.callout p:last-child { margin-bottom:0; }
+.callout-label { font-weight:700; font-size:.84rem; margin:0 0 6px; color:var(--text-muted); }
+.callout.ana { background:var(--ana-bg); border-color:var(--ana-border); }
+.callout.casual { background:var(--casual-bg); border-color:var(--casual-border); }
+.callout.warn { background:var(--warn-bg); border-color:var(--warn-border); }
+.data-table { width:100%; border-collapse:collapse; margin:12px 0 18px; font-size:.9rem; }
+.data-table th,.data-table td { border:1px solid var(--border); padding:8px 11px; text-align:left; vertical-align:top; }
+.data-table th { background:var(--code-bg); font-weight:700; }
+.tbl-scroll { overflow-x:auto; }
+.fig { margin:16px 0; }
+.fig img { width:100%; max-width:600px; display:block; border:1px solid var(--border);
+  border-radius:8px; background:#fff; padding:8px; }
+.fig figcaption { font-size:.82rem; color:var(--text-muted); margin-top:6px; }
+.katex-display { overflow-x:auto; overflow-y:hidden; padding:4px 0; }
+.quiz details { border:1px solid var(--border); border-radius:9px; padding:11px 15px; margin:10px 0; background:var(--bg-card); }
+.quiz summary { font-weight:700; cursor:pointer; list-style:none; }
+.quiz summary::-webkit-details-marker { display:none; }
+.quiz summary::before { content:"▶ "; color:var(--text-muted); font-size:.8em; }
+.quiz details[open] summary::before { content:"▼ "; }
+.quiz details[open] summary { margin-bottom:9px; padding-bottom:8px; border-bottom:1px dashed var(--border); }
+.quiz .ans { color:var(--text-muted); }
+@media (max-width:900px) {
+  .layout { flex-direction:column; }
+  .sidebar { position:static; height:auto; width:100%; border-right:none; border-bottom:1px solid var(--border); }
+  main { padding:22px 18px 70px; }
+}
+</style>
+</head>
+<body>
+<div class="layout">
+  <nav class="sidebar">
+    <h1>基礎知識まとめ</h1>
+    <p class="src">長田論文（詳細まとめ.html）を読む前に、言葉と考え方を揃えるための入門ノート</p>
+    <a href="#zero">0. 論文を超ざっくり</a>
+    <a href="#pll">1. PLLって何をする箱？</a>
+    <a href="#phase">2. なぜ「位相」同期？</a>
+    <a href="#pn-jitter">3. 位相雑音とジッタ</a>
+    <a href="#db">4. dB / dBc / dBc/Hz</a>
+    <a href="#tf">5. 伝達関数・極・零点</a>
+    <a href="#blocks">6. PLLの登場人物とノイズ</a>
+    <a href="#tradeoff">7. 帯域のトレードオフ</a>
+    <a href="#fracn">8. Fractional-N と量子化ノイズ</a>
+    <a href="#spur">9. スパーって何</a>
+    <a href="#mixer">10. ミキサとサンプリング</a>
+    <a href="#fom">11. FoM の読み方</a>
+    <a href="#map">12. 各章マップ</a>
+    <a href="#quiz">確認問題</a>
+  </nav>
+  <main>
+    <header class="page-header">
+      <h1>長田論文を読む前の基礎知識まとめ</h1>
+      <p>「詳細まとめ」がまだ難しく感じるとき用の、言葉と直感をそろえる入門ノート。数式は最小限、比喩多め。<strong>ここを一周してから詳細まとめに戻ると、だいぶ読めるようになるはず。</strong></p>
+      <p class="note">図は論文本文（長田将さんの博士論文）から切り出したもの。個人の学習用。</p>
+    </header>
+
+    <!-- 0 -->
+    <section id="zero" class="sec">
+      <h2>0. この論文が言っていることを超ざっくり</h2>
+      <div class="card">
+        <p>PLL は「正確だけど遅い時計（水晶）」から「速い時計（GHz）」を作る装置。<strong>速くするために「割り算（分周器 ÷N）」を使う</strong>のが普通のやり方。</p>
+        <p>ところがこの「割り算」が、ちょっとしたノイズを <strong>N 倍に拡大</strong>してしまう。とくに「小数倍の時計」を作ろうとすると、割り切れないハンパ（量子化ノイズ）が N 倍されて出てきて、時計がガタガタになる。</p>
+        <p>長田さんの提案：<strong>「割り算」をやめて「引き算」にする。</strong>周波数を引き算する箱＝<strong>ミキサ（正確には高調波ミキサ HM）</strong>を使う。引き算ならノイズは拡大されない。しかも <strong>調整（キャリブレーション）がいらない</strong>。</p>
+        <p>論文は「その引き算方式をどう回路にするか（3章＝Dual-Feedback）」＋「引き算方式ならではの副作用の潰し方（4・5・6章）」でできている。</p>
+        <div class="callout casual">
+          <p class="callout-label">これだけ覚えて次へ</p>
+          <p>敵 ＝ 小数倍PLLの量子化ノイズ／スパー。原因 ＝ 分周器（割り算）がノイズを N 倍する。武器 ＝ ミキサ（引き算）でノイズを N 倍しない。あとは副作用対策。</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 1 -->
+    <section id="pll" class="sec">
+      <h2>1. PLL（位相同期回路）って何をする箱？</h2>
+      <div class="card">
+        <h4>やりたいこと</h4>
+        <p>手元にある基準の信号（水晶発振器、例えば 100&thinsp;MHz。正確だが遅い）から、目的の周波数（例えば 2.4&thinsp;GHz）の信号を作る。作った信号は基準とピッタリ同期していてほしい。</p>
+
+        <div class="callout ana">
+          <p class="callout-label">比喩：合唱の指揮者</p>
+          <p>基準信号＝指揮者のタクト（正確なテンポ）。VCO＝歌い手（自分で声は出せるが、放っておくとテンポがずれる）。PLL＝「歌い手が指揮を見てテンポを合わせ続ける仕組み」。ずれたら自動で直す<strong>フィードバック</strong>になっているのがミソ。</p>
+        </div>
+
+        <h4>速くする仕組み ＝ 分周器（÷N）</h4>
+        <ul>
+          <li>VCO（電圧制御発振器）は制御電圧で周波数が変わる発振器。まずこれを自由に 2.4&thinsp;GHz くらいで発振させる。</li>
+          <li>その 2.4&thinsp;GHz を <strong>÷24 の分周器</strong>に通すと 100&thinsp;MHz になる。これを基準（100&thinsp;MHz）と<strong>位相比較</strong>する。</li>
+          <li>ずれていたら制御電圧を調整して VCO を動かす。ロックすると「VCO出力 ÷24 ＝ 基準」＝ <strong>VCO出力 ＝ 24 × 基準 ＝ 2.4&thinsp;GHz</strong> が保たれる。</li>
+        </ul>
+        <p class="note">つまり出力周波数は $f_\text{OUT}=N\times f_\text{REF}$。N を変えれば出力周波数を変えられる（＝周波数シンセサイザ）。</p>
+
+        <div class="callout">
+          <p class="callout-label">「ループ」の中身（1周）</p>
+          <p>基準 → <strong>PD（位相検出器）</strong>で「VCOの帰還信号」と比べて差を出す → <strong>LF（ループフィルタ）</strong>でならす → <strong>VCO</strong>の制御電圧に → VCO出力 → <strong>÷N</strong>で帰還信号に → PDに戻る。これが延々回って「差がゼロ」に落ち着く。</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 2 -->
+    <section id="phase" class="sec">
+      <h2>2. なぜ「周波数」同期じゃなく「位相」同期と呼ぶ？</h2>
+      <div class="card">
+        <ul>
+          <li><strong>位相</strong>＝波が1周期の中で「今どこにいるか」（0〜360°）。周波数＝位相が進む速さ。</li>
+          <li>「2つの信号の周波数がぴったり同じ」＝「2つの位相の<strong>差が時間的に一定</strong>」。逆に位相差が広がっていく＝周波数がずれている。</li>
+          <li>だから PLL は実際には「位相差を一定（＝ゼロ付近）に保つ」制御をしている。周波数一致はその結果。</li>
+        </ul>
+        <div class="callout ana">
+          <p class="callout-label">比喩：トラックを走る2人</p>
+          <p>2人のランナーの「間隔（位相差）」がずっと一定なら、2人の「速さ（周波数）」は同じ。間隔がじわじわ開くなら速さが違う。PLLは「間隔を一定に保て」と指示するコーチ。</p>
+        </div>
+        <p class="note">解析では信号 $V(t)=A\sin(\omega t+\phi(t))$ と書き、この $\phi(t)$（理想からのズレ＝<strong>過剰位相</strong>）だけを追う。ノイズも「位相のゆらぎ」として $\phi_n$ で表す。</p>
+      </div>
+    </section>
+
+    <!-- 3 -->
+    <section id="pn-jitter" class="sec">
+      <h2>3. 位相雑音（PN）とジッタ ― 何が違う？なぜジッタで測る？</h2>
+      <div class="card">
+        <h4>同じ「時計のガタつき」を2つの見方で表しているだけ</h4>
+        <div class="tbl-scroll">
+        <table class="data-table">
+          <thead><tr><th></th><th>位相雑音 PN</th><th>ジッタ</th></tr></thead>
+          <tbody>
+            <tr><td>見る軸</td><td>周波数軸（スペクトル）</td><td>時間軸</td></tr>
+            <tr><td>中身</td><td>搬送波からどれだけ離れた所に、どれだけノイズがあるか</td><td>波のエッジ（ゼロ交差）が理想からどれだけズレるか、その標準偏差</td></tr>
+            <tr><td>単位</td><td>dBc/Hz（後述）</td><td>秒（fs〜ps）</td></tr>
+            <tr><td>グラフ</td><td>横軸=オフセット周波数[Hz]、縦軸=[dBc/Hz] の右下がりの曲線</td><td>1個の数字（例：175&thinsp;fs）</td></tr>
+          </tbody>
+        </table>
+        </div>
+        <p>PN スペクトルを一定範囲で積分すると、位相ゆらぎの分散が出て、それを時間に直すと<strong>積分ジッタ</strong>になる。つまり <strong>ジッタ ＝ PN曲線の「面積」を時間に換算したもの</strong>。</p>
+
+        <div class="callout warn">
+          <p class="callout-label">超重要：÷N すると PN は下がるがジッタは変わらない</p>
+          <p>信号を ÷N すると、PN のグラフは下に $20\log N$ [dB] ぶん下がる（パワーで $1/N^2$）。「お、ノイズ減った！」と思うが、<strong>周期も N 倍に伸びている</strong>。位相は「1周期＝360°」で数える相対的な量なので、「PNが $1/N$」と「周期が N 倍」がちょうど打ち消し合って、<strong>時間軸のガタつき＝ジッタは1ミリも変わらない</strong>。</p>
+          <p>だから「PN が良くなった」だけでは意味がない。この論文はいつも <strong>ジッタ</strong>（と、それと電力の積＝FoM）で比べる。$\sigma \approx \dfrac{\sqrt{\text{積分PN}}}{f_\text{OUT}}$。</p>
+        </div>
+        <div class="callout ana">
+          <p class="callout-label">比喩</p>
+          <p>ゴム紐に描いた目盛りのブレ幅（＝PN）を測って「ブレが半分になった！」と喜んでも、ゴム紐を2倍に伸ばした（＝周期2倍）だけなら、実際の目盛りの物理的なズレ（＝ジッタ）は同じ。</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 4 -->
+    <section id="db" class="sec">
+      <h2>4. dB / dBc / dBc/Hz の読み方</h2>
+      <div class="card">
+        <ul>
+          <li><strong>dB</strong>：比を対数で表す。パワー比なら $10\log_{10}(\text{比})$、振幅比なら $20\log_{10}(\text{比})$。10倍＝10&thinsp;dB（パワー）、2倍＝約6&thinsp;dB（振幅）、$\times$24 ＝ $20\log 24 \approx 27.6$&thinsp;dB。</li>
+          <li><strong>dBc</strong>：「搬送波（carrier）に対して何 dB か」。$-65$&thinsp;dBc のスパー ＝ 本体より $10^{6.5}\approx$ 300万分の1 のパワーの余計なピー音。小さい（負に大きい）ほど良い。</li>
+          <li><strong>dBc/Hz</strong>：位相雑音の単位。「ある離調周波数で、帯域幅 1&thinsp;Hz あたり、搬送波の何 dB 下にノイズがあるか」。$-120$&thinsp;dBc/Hz @ 1&thinsp;MHz ＝「搬送波から 1&thinsp;MHz 離れた所のノイズ密度は搬送波の $10^{-12}$ /Hz」。</li>
+        </ul>
+        <div class="callout">
+          <p class="callout-label">読みグセ</p>
+          <p>「$-33$&thinsp;dBc が $-66$&thinsp;dBc に改善」＝ 33&thinsp;dB 良くなった ＝ パワーで約2000分の1、振幅で約45分の1。3章で「分周比−1（≈45）倍」の改善が「33&thinsp;dB」と対応するのはこれ（$20\log 45\approx33$）。</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 5 -->
+    <section id="tf" class="sec">
+      <h2>5. 伝達関数・ボード線図・極と零点（最低限）</h2>
+      <div class="card">
+        <h4>伝達関数 ＝ 「周波数ごとの通過率の一覧表」</h4>
+        <p>ある入力（例：VCOのノイズ）が、出力にどれだけの大きさ・位相で現れるかを、周波数の関数 $H(s)$（$s=j\omega$）で表したもの。$|H|$ が大きい周波数はよく通り、小さい周波数は通らない。</p>
+        <p><strong>ボード線図</strong>＝ $|H|$（dB）と位相（度）を、横軸「周波数（対数）」で描いたグラフ。</p>
+
+        <h4>フィルタの3タイプ（この論文でずっと出てくる）</h4>
+        <div class="tbl-scroll">
+        <table class="data-table">
+          <thead><tr><th>型</th><th>通すもの</th><th>PLLでの担当</th></tr></thead>
+          <tbody>
+            <tr><td>LPF（低域通過）</td><td>低い周波数だけ通す</td><td>基準系のノイズ（水晶・PD・分周器・量子化ノイズ）はこれで出力に出る</td></tr>
+            <tr><td>HPF（高域通過）</td><td>高い周波数だけ通す</td><td>VCO のノイズはこれで出力に出る</td></tr>
+            <tr><td>BPF（帯域通過）</td><td>真ん中の周波数だけ通す</td><td>ループフィルタ自身のノイズ</td></tr>
+          </tbody>
+        </table>
+        </div>
+        <p>LPF と HPF の<strong>境目の周波数が同じ</strong>（＝ループ帯域 $\omega_\text{UG}$）。だから「境目をどこに置くか」で基準系ノイズと VCO ノイズの取り分が決まる（→ 7節）。</p>
+
+        <h4>極（pole）と零点（zero）、なぜ安定性の話になるか</h4>
+        <ul>
+          <li><strong>極</strong>：そこを境に $|H|$ が急に落ち始める周波数。1個で $-20$&thinsp;dB/dec 傾く＆位相が $-90°$ 回る。</li>
+          <li><strong>零点</strong>：逆。$|H|$ の落ちを止め、位相を $+90°$ 戻す。</li>
+          <li>PLL は VCO（積分器＝極1個）＋ ループフィルタ（もう1個 DC に極）で <strong>DC に極が2個</strong>。放っておくと位相が $-180°$ 回り、フィードバックが「打ち消し」でなく「増幅」になって<strong>発振（不安定）</strong>。</li>
+          <li>そこで <strong>零点を1個入れて位相を戻す</strong>。ループのゲインが 1 になる周波数（$\omega_\text{UG}$）で位相に余裕（位相マージン）を持たせる。</li>
+        </ul>
+        <div class="fig">
+          <img src="figures/fig_2_6.png" alt="開ループ伝達関数のボード線図">
+          <figcaption>本文 Fig. 2.6：開ループ伝達関数のボード線図。$\omega_\text{UG}$（ゲインが 1 になる点）が零点 $\omega_z$ と極 $\omega_p$ の間にあり、そこで位相マージンを確保している。</figcaption>
+        </div>
+        <div class="callout ana">
+          <p class="callout-label">比喩：シャワーの温度調整</p>
+          <p>熱いと感じてから蛇口をひねり、効くまで時間がかかる（＝位相の遅れ）。遅れが大きすぎると「熱い→全開で冷たく→冷たい→全開で熱く」と発振する。零点＝「配管を短くして反応を早める」工夫。</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 6 -->
+    <section id="blocks" class="sec">
+      <h2>6. PLL の登場人物と、それぞれが出すノイズ</h2>
+      <div class="card">
+        <div class="fig">
+          <img src="figures/fig_2_1.png" alt="PLLの線形モデルとノイズ源">
+          <figcaption>本文 Fig. 2.1：PLL の線形モデル。ループの各所にノイズ源がぶら下がっている。</figcaption>
+        </div>
+        <div class="tbl-scroll">
+        <table class="data-table">
+          <thead><tr><th>ブロック</th><th>役割</th><th>出すノイズ（記号）</th><th>クセ</th></tr></thead>
+          <tbody>
+            <tr><td>基準発振器（水晶など）</td><td>正確なテンポの元</td><td>$\phi_\text{nREF}$</td><td>ほぼ平坦（白色）。低域でフリッカ。電力を上げても下がらない（デバイス固有）</td></tr>
+            <tr><td>PD / PFD / CP（位相検出器＋チャージポンプ）</td><td>基準と帰還の位相差を電流/電圧に変換</td><td>$i_\text{nPD}$</td><td>ほぼ白色。SPD なら $kT/C$ ノイズ、DPLL なら TDC 量子化ノイズ</td></tr>
+            <tr><td>LF（ループフィルタ）</td><td>差の信号をならして制御電圧に</td><td>$v_\text{nLF}$</td><td>設計で十分小さくでき、たいてい無視</td></tr>
+            <tr><td>VCO（電圧制御発振器）</td><td>実際に高周波を出す。LC型かリング型</td><td>$\phi_\text{nVCO}$</td><td>$1/f^2$（右下がりが急）。<strong>設計を左右する最重要ノイズ源</strong></td></tr>
+            <tr><td>分周器（÷N / MMD）</td><td>高周波を基準の周波数まで割り下げて帰還</td><td>$\phi_\text{nDIV}$</td><td>整数分周なら熱雑音だけ。<strong>小数分周だと量子化ノイズが乗る（後述）</strong></td></tr>
+          </tbody>
+        </table>
+        </div>
+        <p class="note">基準・PD・分周器のノイズは「ループの入口側」に集約でき、まとめて<strong>等価基準換算ノイズ $\phi_\text{nEQUIV}$</strong>（白色）と呼ぶ。結局ノイズ源は「入口側の白色ノイズ」と「VCOの $1/f^2$ ノイズ」の2つに単純化される。</p>
+      </div>
+    </section>
+
+    <!-- 7 -->
+    <section id="tradeoff" class="sec">
+      <h2>7. PLL設計の一番基本のトレードオフ（帯域の置き方）</h2>
+      <div class="card">
+        <ul>
+          <li>入口側の白色ノイズ（$\phi_\text{nEQUIV}$）は <strong>LPF</strong> で出力に出る（低域だけ通る）。</li>
+          <li>VCO のノイズ（$\phi_\text{nVCO}$）は <strong>HPF</strong> で出力に出る（高域だけ通る）。</li>
+          <li>両者の境目は同じ ＝ <strong>ループ帯域 $\omega_\text{UG}$</strong>。</li>
+        </ul>
+        <p>だから：</p>
+        <ul>
+          <li>帯域を<strong>狭く</strong>する → 入口側ノイズはよく消える、が VCO ノイズが低域まで残って悪化。</li>
+          <li>帯域を<strong>広く</strong>する → VCO ノイズはよく消える、が入口側ノイズが高域まで通って悪化。</li>
+          <li>→ <strong>ちょうど良い帯域</strong>で合計ジッタが最小になる。</li>
+        </ul>
+        <div class="fig">
+          <img src="figures/fig_2_4.png" alt="帯域を変えたときの位相雑音">
+          <figcaption>本文 Fig. 2.4：同じPLLで帯域だけ変えた位相雑音。(a) 1.5&thinsp;MHz＝ちょうど良い（青＝入口側、赤＝VCO、黄＝合計）、(b) 300&thinsp;kHz＝狭すぎてVCOが暴れる、(c) 7.5&thinsp;MHz＝広すぎて入口側が通る。</figcaption>
+        </div>
+        <div class="callout casual">
+          <p class="callout-label">なぜこれが論文の出発点になるか</p>
+          <p>小数分周にすると、この「入口側ノイズ」に<strong>DSM量子化ノイズ</strong>が大量に加わる。しかもそれを消すには帯域をうんと狭くするしかなく、するとVCOノイズが悪化 → integer-N より明確にジッタが悪くなる。この「小数倍の代償」をどう小さくするかが論文全体のテーマ。</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 8 -->
+    <section id="fracn" class="sec">
+      <h2>8. Fractional-N と量子化ノイズ ― 小数倍がなぜ難しい</h2>
+      <div class="card">
+        <h4>分周器は整数しか割れない</h4>
+        <p>$f_\text{OUT}=N\times f_\text{REF}$ で N が整数なら、出力周波数は基準の飛び飛びの倍数しか作れない。細かい周波数刻みが欲しい用途では困る。</p>
+
+        <h4>解決：分周比を毎回変えて「平均で小数」にする</h4>
+        <div class="fig">
+          <img src="figures/fig_2_7.png" alt="÷2.25 を 2,3,2,2 で近似">
+          <figcaption>本文 Fig. 2.7：÷2.25 を「2, 3, 2, 2, …」と切り替えて平均 2.25 を作る。位相誤差 $\Delta\phi$ の平均はゼロだが、毎回ゆれている。</figcaption>
+        </div>
+        <ul>
+          <li>÷2.25 なら「2, 3, 2, 2」を繰り返せば平均 2.25。PLL は平均で合わせるので、実効的に ÷2.25 になる。</li>
+          <li>でも毎回の分周比は 2 か 3 の<strong>ハンパ</strong>。この「割り切れなさ」が帰還信号に乗るノイズ＝<strong>量子化ノイズ</strong>。</li>
+        </ul>
+
+        <h4>量子化ノイズを目立たなくする ＝ ΔΣ変調（DSM）</h4>
+        <ul>
+          <li>単純に「2,3,2,2」と<strong>周期的</strong>に繰り返すと、その繰り返しが鋭いピー音（スパー）になる → 使い物にならない。</li>
+          <li>ランダムっぽく切り替える＋<strong>ノイズシェーピング</strong>：ハンパのノイズを<strong>高い周波数に押し上げる</strong>。PLL の LPF は高域を捨てるので、押し上げた分だけ消える。</li>
+          <li>これをやる回路が <strong>DSM（デルタシグマ変調器）</strong>。<strong>MASH 1-1-1</strong> は 1次DSMを3段重ねて「3次のノイズシェーピング」（低域を強く抑え、その分高域に山ができる）を作る定番。</li>
+        </ul>
+        <div class="fig">
+          <img src="figures/fig_2_9.png" alt="Fractional-N PLL の位相雑音">
+          <figcaption>本文 Fig. 2.9：小数分周にすると DSM 量子化ノイズ（紫）が乗り、(a) 普通の帯域では合計（黄）が大きく悪化。(b) 帯域を狭めれば抑えられるが、そのぶんVCOが効いてきて、結局 integer-N より悪い。</figcaption>
+        </div>
+        <div class="callout ana">
+          <p class="callout-label">比喩：おつりの1円玉</p>
+          <p>毎回の買い物で「きっちり払えない端数」が出る。1回1回はバラバラ（＝量子化ノイズ）。DSM＝「端数をなるべく細かい単位に散らして、家計簿の合計では見えなくする」テクニック。ノイズシェーピング＝「端数を、後で簡単に切り捨てられる桁に寄せる」。</p>
+        </div>
+
+        <h4>さらに悪いこと：分周器がノイズを N 倍する</h4>
+        <p>PLL はフィードバック系。入口側のノイズは「フィードバックの強さ $\beta$ の逆数」倍されて出力に出る。分周器を使うと $\beta=1/N$ なので、<strong>入口側ノイズ（量子化ノイズ含む）が N 倍</strong>。100&thinsp;MHz→2.4&thinsp;GHz なら $\times$24 ＝ 27.6&thinsp;dB。これが「小数倍の代償」が大きい根本原因。<strong>長田論文はここを「割り算をやめて引き算にする」で潰す。</strong></p>
+        <div class="fig">
+          <img src="figures/fig_3_1.png" alt="分周器とミキサのフィードバック利得">
+          <figcaption>本文 Fig. 3.1：(a) フィードバック系では入口側ノイズが $1/\beta$ 倍。(b) 分周器だと $\beta=1/N$（＝ノイズ N 倍）、ミキサ（引き算）だと $\beta=1$（＝ノイズ等倍、増えない）。</figcaption>
+        </div>
+      </div>
+    </section>
+
+    <!-- 9 -->
+    <section id="spur" class="sec">
+      <h2>9. スパー（spur）って何</h2>
+      <div class="card">
+        <ul>
+          <li>スパー ＝ 位相雑音スペクトルの中の<strong>鋭い一本のピー音</strong>（連続的なノイズの丘ではなく、線）。</li>
+          <li>原因は「何かの<strong>周期的な繰り返し</strong>」。周期的な変動は、周波数軸では必ずトーン（線）になる。</li>
+          <li><strong>フラクショナルスパー</strong>：DSM の出力が完全にはランダムでなく周期性が残る＋回路の<strong>非線形</strong>（CPの電流ミスマッチ等）でノイズが折り返される → $\alpha f_\text{REF}$（$\alpha$＝分周比の小数部）とその倍数に出る。$\alpha$ が小さいと<strong>搬送波のすぐ近く</strong>に出て、フィルタで消せない。</li>
+          <li><strong>基準スパー</strong>：基準周波数（例 100&thinsp;MHz）に出るスパー。PD が周期的に動くことなどが原因。</li>
+          <li><strong>オフセットスパー（4章）</strong>：HM（S/H）を使うと出る、この方式特有のスパー。詳細まとめ4章のテーマ。</li>
+        </ul>
+        <div class="callout warn">
+          <p class="callout-label">スパーとノイズの違い（対策が違う）</p>
+          <p>連続的なノイズは「帯域を調整」「電力を足す」で下げられる。スパーは線なので、そのやり方が効きにくい。とくに搬送波近くのスパーは、帯域を狭めても搬送波ごと削ってしまうので消せない。だから「そもそも出さない設計」が要る。</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 10 -->
+    <section id="mixer" class="sec">
+      <h2>10. ミキサとサンプリング（HM を理解する前提）</h2>
+      <div class="card">
+        <h4>ミキサ ＝ 周波数の足し算・引き算をする箱</h4>
+        <ul>
+          <li>2つの信号（周波数 $f_1$, $f_2$）を掛け算すると、出力に <strong>$f_1+f_2$ と $f_1-f_2$</strong> の成分ができる。片方をフィルタで取れば「周波数の引き算」ができる。</li>
+          <li>PLL の帰還で「÷N（割り算）」の代わりに「$f_\text{OUT}-f_\text{LO}$（引き算）」を使えば、$\beta=1$ でノイズを増やさない。これが論文の核。</li>
+        </ul>
+
+        <h4>単純ミキサの問題 → 高調波ミキサ（HM）</h4>
+        <ul>
+          <li>単純ミキサだと $f_\text{LO}$ を $f_\text{OUT}$ のすぐ近くに置くことになり、2つの発振器が<strong>引き込み合って</strong>ノイズ悪化（frequency pulling）。</li>
+          <li><strong>高調波ミキサ HM</strong>：$f_\text{HM}=f_\text{OUT}-k\,f_\text{LO}$（$k$＝整数。LO の $k$ 倍を引く）。$f_\text{LO}$ を $f_\text{OUT}$ からずっと下に置けるので引き込みが減る。</li>
+          <li>それでも $f_\text{OUT}\approx k f_\text{LO}$ で高調波による引き込みが残る → LO の前に「$k$ と互いに素な分周比」の分周器を足してさらに回避。</li>
+        </ul>
+        <div class="fig">
+          <img src="figures/fig_3_4.png" alt="単純ミキサ／HM／HM＋分周器">
+          <figcaption>本文 Fig. 3.4：(a) 単純ミキサ（$f_\text{OUT}\approx f_\text{LO}$ で引き込み）、(b) HM（$f_\text{OUT}-k f_\text{LO}$ で距離を取る）、(c) HM＋LO前分周器（さらに引き込み低減）。</figcaption>
+        </div>
+
+        <h4>HM をどう作るか ＝ サンプル&ホールド（S/H）</h4>
+        <p>S/H ＝「一定間隔 $T_\text{SH}$ ごとに入力の値をパチッと取り（サンプル）、次に取るまでその値を保つ（ホールド）」。これが実は HM として働く。</p>
+        <div class="fig">
+          <img src="figures/fig_3_5.png" alt="サンプリングの時間・周波数領域">
+          <figcaption>本文 Fig. 3.5：サンプリング。時間領域で「インパルス列を掛ける」＝ 周波数領域で「$f_\text{SH}$ 間隔でスペクトルのコピーを作る」。</figcaption>
+        </div>
+        <div class="fig">
+          <img src="figures/fig_3_6.png" alt="ホールドの時間・周波数領域">
+          <figcaption>本文 Fig. 3.6：ホールド。時間領域で「幅 $T_\text{SH}$ の矩形と畳み込む」＝ 周波数領域で「sinc 関数を掛ける」（$f_\text{SH}$ の整数倍にノッチ＝ゼロ点）。</figcaption>
+        </div>
+        <ul>
+          <li>サンプリングで $f_\text{OUT}-k f_\text{SH}$ などの成分ができ、ホールドの sinc で余計な高周波成分が減衰 → 望みの $f_\text{HM}=f_\text{OUT}-k f_\text{SH}$ が残る（＝HM 完成）。</li>
+          <li><strong>ただし sinc は余計な成分を完全には消せない。</strong>この「取りこぼし」が4章の「オフセットスパー」。だから S/H の前後にちゃんとしたフィルタ（LPF）を置く必要がある。</li>
+        </ul>
+        <div class="callout ana">
+          <p class="callout-label">比喩：ストロボ写真</p>
+          <p>回っているプロペラを一定間隔でストロボ撮影すると、実際よりゆっくり回って見えたり止まって見えたりする（＝速い周波数が遅い周波数に化ける＝ダウンコンバート）。S/H はこれを意図的にやって高周波を低周波に落としている。「化けた見かけの周波数」が $f_\text{HM}$。</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 11 -->
+    <section id="fom" class="sec">
+      <h2>11. FoM（性能指数）の読み方</h2>
+      <div class="card">
+        <p>$$\text{FoM}_\text{jitter}=10\log_{10}\!\left[\left(\frac{\sigma}{1\,\text{s}}\right)^2\left(\frac{P}{1\,\text{mW}}\right)\right]\ [\text{dB}]$$</p>
+        <ul>
+          <li>「ジッタ² × 電力」を対数にしたもの。<strong>小さい（負に大きい）ほど良い</strong>。$-248$&thinsp;dB は $-229$&thinsp;dB よりずっと良い。</li>
+          <li>なぜ「ジッタ²×電力」か：多くの回路で「電力を2倍にするとノイズパワーが半分」＝ ジッタ² ∝ 1/電力。だから ジッタ²×電力 ≒ 一定 が「その回路方式の効率」を表す。</li>
+          <li>「FoM が同じでもジッタ要求を満たせないと失格」なので、論文では1点のFoMでなく<strong>ジッタ-電力の曲線（パレート）</strong>で方式を比較する（詳細まとめ3.5節）。</li>
+        </ul>
+        <div class="tbl-scroll">
+        <table class="data-table">
+          <thead><tr><th>試作</th><th>ジッタ</th><th>FoM</th><th>ひとこと</th></tr></thead>
+          <tbody>
+            <tr><td>3章（LC-VCO, 3.5GHz）</td><td>503&thinsp;fs</td><td>—</td><td>量子化ノイズ増幅回避の実証、フラクショナルスパー −65&thinsp;dBc</td></tr>
+            <tr><td>5章（リングVCO, 3GHz）</td><td>869&thinsp;fs</td><td>−229.4&thinsp;dB</td><td>キャリブレーション不要のリングVCO小数PLLで最良クラス</td></tr>
+            <tr><td>6章（7GHz）</td><td>106&thinsp;fs</td><td>−248.5&thinsp;dB</td><td>SOTA級。基準スパー −77&thinsp;dBc</td></tr>
+          </tbody>
+        </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- 12 -->
+    <section id="map" class="sec">
+      <h2>12. 各章がどの悩みを解いているか（1枚マップ）</h2>
+      <div class="card">
+        <div class="tbl-scroll">
+        <table class="data-table">
+          <thead><tr><th>章</th><th>悩み</th><th>打ち手</th></tr></thead>
+          <tbody>
+            <tr><td>2</td><td>（土台）小数倍にすると量子化ノイズで integer-N よりジッタが悪い</td><td>先行手法3系統を整理（ノイズキャンセル／シェーピング周波数↑／等価FIR）</td></tr>
+            <tr><td>3 ★</td><td>分周器（÷N）が量子化ノイズを N 倍する</td><td><strong>HM（引き算）で帰還 → $\beta=1$、増幅なし</strong>。回路として <strong>Dual-Feedback</strong>（補助PLL1個）を提案。キャリブレーション不要</td></tr>
+            <tr><td>4</td><td>HM（S/H）が「オフセットスパー」を出す</td><td>Type-A / Type-B の発生機構・位置・大きさを式で予測 → S/H 前後の LPF 設計指針</td></tr>
+            <tr><td>5</td><td>Dual-Feedback は「ノイズシェーピング周波数」が頭打ち。リングVCOだと量子化ノイズが残る</td><td>分割帰還分周＋Nested-PLL フィルタ（PDLPF）を Dual-Feedback の中に入れる。シェーピング周波数を $N_2$ 倍に</td></tr>
+            <tr><td>6</td><td>HM用LOを作る「余分なVCO」のノイズが乗る</td><td>高速遅延線を使わない<strong>電圧領域フィードフォワード雑音キャンセル</strong>で外部VCOのノイズを打ち消す</td></tr>
+            <tr><td>7</td><td>—</td><td>展望：mm-wave、N-path S/H、マルチチャネル共有、DTC併用</td></tr>
+          </tbody>
+        </table>
+        </div>
+        <div class="callout casual">
+          <p class="callout-label">次のステップ</p>
+          <p>ここまで入ったら <strong>詳細まとめ.html の「この論文を1枚で」→「記号早見表」→ 第2章</strong> の順で戻るとスッと読めるはず。各章末の確認問題を先に見て、答えられない所だけ本文に戻る、という使い方も効率的。</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- quiz -->
+    <section id="quiz" class="sec quiz">
+      <h2>✅ 基礎の確認問題</h2>
+      <div class="card">
+        <details>
+          <summary>B-1. PLL は何から何を作る装置か。速くするのに何を使うか。</summary>
+          <div class="ans"><p>正確だが遅い基準信号（水晶、数十〜数百MHz）から、目的の高い周波数（GHz級）の、基準に同期した信号を作る。速くするのにフィードバックループの中に分周器（÷N）を入れ、$f_\text{OUT}=N f_\text{REF}$ とする。</p></div>
+        </details>
+        <details>
+          <summary>B-2. 「周波数が合う」を位相の言葉で言い換えると？</summary>
+          <div class="ans"><p>2つの信号の位相差が時間的に一定であること。PLL は位相差を一定（ゼロ付近）に保つ制御をしていて、周波数一致はその結果。だから「位相」同期回路と呼ぶ。</p></div>
+        </details>
+        <details>
+          <summary>B-3. 信号を ÷N したとき、PN とジッタはそれぞれどうなるか。なぜジッタで評価するのか。</summary>
+          <div class="ans"><p>PN は $20\log N$ [dB] 下がる（パワーで $1/N^2$）が、周期が N 倍になるので<strong>ジッタは不変</strong>。位相は「1周期＝360°」で数える相対量なので両者が相殺する。PN の絶対値は動作周波数を変えるだけで動いてしまうので、時間軸の実ズレ＝ジッタ（と電力との積＝FoM）で比べる。</p></div>
+        </details>
+        <details>
+          <summary>B-4. $-40$&thinsp;dBc のスパーが $-70$&thinsp;dBc に改善した。何倍良くなったか（振幅で）。</summary>
+          <div class="ans"><p>30&thinsp;dB 改善 ＝ 振幅で $10^{30/20}\approx31.6$ 倍小さくなった（パワーで1000分の1）。詳細まとめ5章の「$20\log(4\times8.0018)\approx30$」＝分周比の積 32 倍の増幅回避、と対応する。</p></div>
+        </details>
+        <details>
+          <summary>B-5. LPF・HPF の境目の周波数が同じだと、なぜトレードオフになるのか。</summary>
+          <div class="ans"><p>入口側の白色ノイズは LPF で、VCO ノイズは HPF で出力に出る。境目（ループ帯域 $\omega_\text{UG}$）を下げると入口側は減るが VCO が低域まで残り悪化、上げると逆。両方を同時に最小にはできず、合計ジッタが最小になる中間の帯域を選ぶことになる。</p></div>
+        </details>
+        <details>
+          <summary>B-6. DSM（ΔΣ変調器）は量子化ノイズを「消す」のか？何をしているのか。</summary>
+          <div class="ans"><p>消してはいない。総量は保ったまま、ノイズを<strong>高い周波数へ押し上げる</strong>（ノイズシェーピング）。PLL の LPF が高域を捨てるので、押し上げた分だけ出力では見えなくなる。MASH 1-1-1 は 1次DSM 3段で3次のシェーピングを作る。加えて周期性を崩してスパーを避ける役目もある。</p></div>
+        </details>
+        <details>
+          <summary>B-7. 「分周器の代わりにミキサ」で何が良くなるのか。単純ミキサの問題と対策は？</summary>
+          <div class="ans"><p>フィードバック利得が $\beta=1/N$ から $\beta=1$ になり、入口側ノイズ（量子化ノイズ含む）が N 倍されなくなる。単純ミキサだと $f_\text{LO}\approx f_\text{OUT}$ で発振器どうしが引き込み合う → 高調波ミキサ $f_\text{HM}=f_\text{OUT}-k f_\text{LO}$ で $f_\text{LO}$ を下に離す。さらに LO 前に「$k$ と互いに素な分周比」の分周器を足す。</p></div>
+        </details>
+        <details>
+          <summary>B-8. S/H（サンプル&ホールド）が HM として働く仕組みを、時間領域と周波数領域で。</summary>
+          <div class="ans"><p>サンプル＝時間領域でインパルス列を掛ける＝周波数領域で $f_\text{SH}$ 間隔のスペクトルコピーを作る（高周波が低周波に化ける＝ダウンコンバート）。ホールド＝時間領域で幅 $T_\text{SH}$ の矩形と畳み込む＝周波数領域で sinc を掛ける（$f_\text{SH}$ の整数倍にノッチ）。結果、$f_\text{HM}=f_\text{OUT}-k f_\text{SH}$ が残り、余計な高周波は sinc で減衰。ただし完全には消えず、それが4章のオフセットスパー。</p></div>
+        </details>
+      </div>
+    </section>
+
+    <footer class="page-header" style="margin-top:40px;border-bottom:none;border-top:1px solid var(--border);padding-top:22px;">
+      <p class="note">図は Masaru Osada, <em>Low-Phase-Noise and Low-Spur Fractional-N PLLs Employing Harmonic-Mixer-Based Feedback</em>（東京大学 博士論文, 2023年12月, <code>PLL論文/参考論文/長田将_本文.pdf</code>）の本文から切り出したもの。個人の学習用。全図は <code>PLL論文/読書ノート/figures/</code> にある。</p>
+      <p class="note">この後は <code>PLL論文/読書ノート/長田論文_詳細まとめ.html</code> へ。より砕けた2・3章版は <code>index.html</code>。</p>
+    </footer>
+  </main>
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/contrib/auto-render.min.js"></script>
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+  if (window.renderMathInElement) {
+    renderMathInElement(document.body, {
+      delimiters: [
+        { left: "$$", right: "$$", display: true },
+        { left: "$", right: "$", display: false }
+      ],
+      throwOnError: false
+    });
+  }
+});
+</script>
+</body>
+</html>
