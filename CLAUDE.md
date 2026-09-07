@@ -20,10 +20,19 @@ coursework and PLL (Phase-Locked Loop) circuit research:
   duplicate under `DigitalTraining/FPGA/` also needs the same change.
 - `PLL論文/` — notes and reference papers for the graduation thesis, split into
   `参考論文/` (external reference PDFs, including the DTC-based /
-  harmonic-mixer-based fractional-N PLL papers previously at the repo root),
-  `読書ノート/` (Japanese-language chapter summaries/Q&A, `*.md`/`*.pdf`, e.g.
-  `2章まとめ.md`, `3章で出た疑問.md`), and `tools/` (helper scripts, e.g.
-  `改行をスペースに.py`). See `PLL論文/README.md` for details.
+  harmonic-mixer-based fractional-N PLL papers previously at the repo root, plus
+  `長田将_本文.pdf` — Osada's 2023 PhD thesis, the graduation thesis's direct
+  foundation), `読書ノート/` (Japanese study notes as self-contained HTML with
+  inline `<style>` + KaTeX, meant to be hosted together on Netlify: `index.html`
+  is a table-of-contents page linking `basics.html` (prerequisites primer),
+  `thesis-notes.html` (full 7-chapter summary of `長田将_本文.pdf`, with ~47
+  figures embedded from `読書ノート/figures/`), and `ch2-3-notes.html` (the
+  earlier casual ch2–3 notes); the old per-chapter `*.md`/`*.pdf` notes were
+  folded into the HTML and deleted — recover from git history if needed), and
+  `tools/` (helper scripts, e.g. `改行をスペースに.py`). See `PLL論文/README.md`
+  for details. When adding to the reading notes, edit the HTML (not new `.md`),
+  keep CSS inline, and pull any needed figures from `長田将_本文.pdf` into
+  `読書ノート/figures/fig_<chap>_<num>.png`.
 - `matlab/` — MATLAB/Simulink models and scripts for PLL noise analysis and
   NSGA-II-based multi-objective circuit optimization (see below).
 
@@ -121,11 +130,13 @@ the same two metrics (integrated RMS jitter vs. power):
 - **Harmonic-Mixer (HM)-based**: replaces the ÷N feedback divider with a
   mixer that subtracts a multiple of a local oscillator (`f_OUT − k·f_LO`,
   via a sample-and-hold harmonic mixer), making the feedback gain ≈1 so
-  quantization noise isn't re-amplified. Built up through
-  `PLL論文/3章まとめ.md`'s progression: single HM PLL → Triple-Loop PLL (3
-  PLLs, unity-gain main loop) → Dual-Feedback PLL (2 PLLs, one loop with two
+  quantization noise isn't re-amplified. Built up through the progression in
+  `PLL論文/読書ノート/thesis-notes.html` ch.3: single HM PLL → Triple-Loop PLL
+  (3 PLLs, unity-gain main loop) → Dual-Feedback PLL (2 PLLs, one loop with two
   feedback paths — HM-based and divider-based — combining the Triple-Loop's
-  noise benefit with less area/power).
+  noise benefit with less area/power). Ch.4 covers the S/H-induced offset
+  spurs, ch.5 adds nested-PLL phase-domain filtering for ring-VCO use, ch.6
+  adds feed-forward noise cancellation for the extra-VCO overhead.
 
 `Conv_FNPLL_noise_analysis.m` models the conventional single-loop case;
 `Dual_FB_PLL_noise_analysis.m` models the Dual-Feedback architecture; the
