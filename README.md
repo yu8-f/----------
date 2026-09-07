@@ -7,9 +7,8 @@
 ## 📁 ディレクトリ構成
 - `AnalogTraining/` `DigitalTraining/`：トレーニング用ファイル
 - `FPGA/`：デジタルトレーニングで書いたFPGA用コード(`DigitalTraining/FPGA/`と同一内容の複製)
-- `PLL論文/`：卒論の前段階として読んだPLLの博士論文関連
+- `PLL論文/`：卒論の前段階として読んだPLL関連論文と読書メモ(`参考論文/` `読書ノート/` `tools/`、詳細は`PLL論文/README.md`)
 - `matlab/`：PLLノイズ解析・NSGA-IIによる多目的最適化のMATLAB/Simulinkスクリプト
-- ルート直下のPDF：DTCベース／ハーモニックミキサーベースPLLの参考論文
 
 ## 🛠 使用ツール
 - シミュレータ：Icarus Verilog / ModelSim

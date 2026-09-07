@@ -18,13 +18,14 @@ coursework and PLL (Phase-Locked Loop) circuit research:
   `FPGA_02_adder`, `FPGA_03_counter`, `FPGA_04_pow2`, `FPGA_e`, `FPGA_e2`).
   When editing exercises under one of these names, check whether the
   duplicate under `DigitalTraining/FPGA/` also needs the same change.
-- `PLL論文/` — notes and Q&A (`*.md`/`*.pdf`) written while reading PLL-related
-  papers/theses for the graduation thesis; Japanese-language summaries per
-  chapter (`2章まとめ.md`, `3章で出た疑問.md`, etc.).
+- `PLL論文/` — notes and reference papers for the graduation thesis, split into
+  `参考論文/` (external reference PDFs, including the DTC-based /
+  harmonic-mixer-based fractional-N PLL papers previously at the repo root),
+  `読書ノート/` (Japanese-language chapter summaries/Q&A, `*.md`/`*.pdf`, e.g.
+  `2章まとめ.md`, `3章で出た疑問.md`), and `tools/` (helper scripts, e.g.
+  `改行をスペースに.py`). See `PLL論文/README.md` for details.
 - `matlab/` — MATLAB/Simulink models and scripts for PLL noise analysis and
   NSGA-II-based multi-objective circuit optimization (see below).
-- Root-level PDFs — reference papers on DTC-based / harmonic-mixer-based
-  fractional-N PLLs.
 
 There is no CI, linter, or automated test suite configured. "Running" this
 repo means simulating Verilog testbenches or executing MATLAB scripts by hand.
