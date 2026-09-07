@@ -9,7 +9,10 @@
   - `Optimization_of_DTC-Based_and_Harmonic-Mixer-Based_Fractional-N_PLLs_Comparative_Analysis_of_Jitter_and_Power_Trade-Offs.pdf`
   - `長田将_本文.pdf` — 長田さんの論文本文
   - `編集後.pdf` — `長田将_本文.pdf`を読みやすく編集した版
-- `読書ノート/` — 章ごとの読書メモ(`.md`が原本、`.pdf`はエクスポート版)
+- `読書ノート/` — 章ごとの読書メモ(`.md`が原本、`.pdf`はエクスポート版)。`index.html`を
+  ブラウザで開くと、数式(KaTeX)付きで見やすく整形された版が読める(長田将_本文.pdfを
+  ChatGPTと一緒に読んで作成したメモ)
+  - `index.html` — 全ノートをまとめた閲覧用ページ
   - `2章まとめ.md` / `2章まとめ.pdf`
   - `2章で出た疑問.md` / `2章で出た疑問.pdf`
   - `3章まとめ.md` / `3章まとめ.pdf`

@@ -1,0 +1,908 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PLL論文 読書ノート</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.css">
+<style>
+:root {
+  --bg: #f6f5f2;
+  --bg-card: #ffffff;
+  --text: #2b2a28;
+  --text-muted: #6b6862;
+  --border: #e4e1da;
+  --accent-2: #3b6ea5;
+  --accent-2-soft: #eaf1f9;
+  --accent-3: #3a8a63;
+  --accent-3-soft: #eaf6ef;
+  --callout-bg: #fbf7ec;
+  --callout-border: #e8dcb0;
+  --casual-bg: #f1f0fb;
+  --casual-border: #d9d6f2;
+  --code-bg: #f0efec;
+  --shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #1c1b19;
+    --bg-card: #262523;
+    --text: #eae8e3;
+    --text-muted: #a39e93;
+    --border: #3a3835;
+    --accent-2: #7fb0e0;
+    --accent-2-soft: #22344a;
+    --accent-3: #7ecba0;
+    --accent-3-soft: #1f3a2c;
+    --callout-bg: #33301f;
+    --callout-border: #57502c;
+    --casual-bg: #2a2840;
+    --casual-border: #423e63;
+    --code-bg: #302e2b;
+    --shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+  }
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: "Hiragino Sans", "Yu Gothic", "Segoe UI", system-ui, sans-serif;
+  line-height: 1.75;
+}
+
+.layout {
+  display: flex;
+  max-width: 1200px;
+  margin: 0 auto;
+  align-items: flex-start;
+}
+
+/* --- サイドバー --- */
+.sidebar {
+  position: sticky;
+  top: 0;
+  flex: 0 0 220px;
+  height: 100vh;
+  overflow-y: auto;
+  padding: 28px 18px;
+  border-right: 1px solid var(--border);
+}
+
+.sidebar h1 {
+  font-size: 1.05rem;
+  margin: 0 0 4px;
+}
+
+.sidebar .source {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  margin: 0 0 24px;
+  line-height: 1.5;
+}
+
+.nav-group {
+  margin-bottom: 20px;
+}
+
+.nav-label {
+  display: block;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  margin-bottom: 6px;
+}
+
+.sidebar a {
+  display: block;
+  padding: 6px 10px;
+  margin: 2px 0;
+  border-radius: 6px;
+  color: var(--text);
+  text-decoration: none;
+  font-size: 0.9rem;
+}
+
+.sidebar a:hover {
+  background: var(--accent-2-soft);
+}
+
+/* --- メイン --- */
+main {
+  flex: 1;
+  min-width: 0;
+  padding: 32px 40px 80px;
+}
+
+.page-header {
+  margin-bottom: 40px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid var(--border);
+}
+
+.page-header h1 {
+  margin: 0 0 8px;
+  font-size: 1.6rem;
+}
+
+.page-header p {
+  margin: 0;
+  color: var(--text-muted);
+}
+
+.chapter {
+  margin-bottom: 56px;
+  scroll-margin-top: 20px;
+}
+
+.chapter-title {
+  font-size: 1.3rem;
+  padding-bottom: 10px;
+  border-bottom: 2px solid var(--border);
+  margin-bottom: 28px;
+}
+
+.chapter-2 .chapter-title { border-bottom-color: var(--accent-2); }
+.chapter-3 .chapter-title { border-bottom-color: var(--accent-3); }
+
+.topic {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 24px 28px;
+  margin-bottom: 24px;
+  box-shadow: var(--shadow);
+  scroll-margin-top: 20px;
+}
+
+.topic h3 {
+  margin-top: 0;
+  font-size: 1.15rem;
+}
+
+.chapter-2 .topic h3 { color: var(--accent-2); }
+.chapter-3 .topic h3 { color: var(--accent-3); }
+
+.topic h4 {
+  font-size: 1rem;
+  margin: 24px 0 10px;
+}
+
+.topic h5 {
+  font-size: 0.95rem;
+  margin: 0 0 8px;
+}
+
+.bullets {
+  padding-left: 1.3em;
+  margin: 8px 0 16px;
+}
+
+.bullets li { margin-bottom: 4px; }
+
+.note {
+  color: var(--text-muted);
+  font-size: 0.92rem;
+}
+
+sub { font-size: 0.75em; }
+
+/* --- テーブル --- */
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 12px 0 20px;
+  font-size: 0.92rem;
+}
+
+.data-table th, .data-table td {
+  border: 1px solid var(--border);
+  padding: 8px 12px;
+  text-align: left;
+  vertical-align: top;
+}
+
+.data-table th {
+  background: var(--code-bg);
+  font-weight: 700;
+}
+
+.data-table tr:nth-child(even) td {
+  background: color-mix(in srgb, var(--code-bg) 40%, transparent);
+}
+
+/* --- コールアウト --- */
+.callout {
+  background: var(--callout-bg);
+  border: 1px solid var(--callout-border);
+  border-radius: 10px;
+  padding: 14px 18px;
+  margin: 12px 0 20px;
+}
+
+.callout p:last-child { margin-bottom: 0; }
+
+.callout-label {
+  font-weight: 700;
+  font-size: 0.85rem;
+  margin: 0 0 6px;
+  color: var(--text-muted);
+}
+
+.callout.casual {
+  background: var(--casual-bg);
+  border-color: var(--casual-border);
+}
+
+/* --- 手法ブロック --- */
+.method {
+  border-left: 3px solid var(--border);
+  padding-left: 16px;
+  margin: 16px 0;
+}
+
+/* --- Q&A --- */
+.qa-list {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.qa-item {
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 14px 18px;
+}
+
+.qa-item .q {
+  font-weight: 700;
+  margin: 0 0 8px;
+  display: flex;
+  gap: 8px;
+}
+
+.q-num {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  font-size: 0.78rem;
+  font-weight: 700;
+  background: var(--accent-2-soft);
+  color: var(--accent-2);
+}
+
+.chapter-3 .q-num {
+  background: var(--accent-3-soft);
+  color: var(--accent-3);
+}
+
+.qa-item .a {
+  color: var(--text-muted);
+  padding-left: 30px;
+  border-left: 2px solid var(--border);
+  margin-left: 10px;
+}
+
+.qa-item .a p { margin: 4px 0; }
+
+/* --- レスポンシブ --- */
+@media (max-width: 860px) {
+  .layout { flex-direction: column; }
+  .sidebar {
+    position: static;
+    height: auto;
+    width: 100%;
+    border-right: none;
+    border-bottom: 1px solid var(--border);
+  }
+  main { padding: 24px 20px 60px; }
+}
+</style>
+</head>
+<body>
+<div class="layout">
+  <nav class="sidebar">
+    <h1>PLL論文 読書ノート</h1>
+    <p class="source">長田将_本文.pdf をChatGPTと一緒に読んで作成</p>
+
+    <div class="nav-group">
+      <span class="nav-label">第2章</span>
+      <a href="#ch2-summary">まとめ</a>
+      <a href="#ch2-qa">Q&amp;A</a>
+    </div>
+    <div class="nav-group">
+      <span class="nav-label">第3章</span>
+      <a href="#ch3-summary">まとめ</a>
+      <a href="#ch3-qa">Q&amp;A</a>
+    </div>
+  </nav>
+
+  <main>
+    <header class="page-header">
+      <h1>PLL論文 読書ノート</h1>
+      <p>長田将さんの博士論文本文を読みながらまとめた、章ごとの要点とQ&amp;A。</p>
+    </header>
+
+    <!-- ============ 第2章 まとめ ============ -->
+    <section id="ch2-summary" class="chapter chapter-2">
+      <h2 class="chapter-title">🌟 第2章：PLLの基礎とFractional-N設計の世界</h2>
+
+      <article class="topic">
+        <h3>2.1節｜Basic Linear Model and Transfer Functions</h3>
+
+        <div class="callout">
+          <p class="callout-label">✅ この節の目的</p>
+          <p>PLLの<strong>線形モデル</strong>を使って、各ノイズ源が出力にどう影響するかを定量的に捉えるための<strong>伝達関数</strong>を導出する。</p>
+        </div>
+
+        <h4>🔹 PLLの基本構造(Fig. 2.1)</h4>
+        <table class="data-table">
+          <thead><tr><th>ブロック</th><th>説明</th></tr></thead>
+          <tbody>
+            <tr><td>PD(Phase Detector)</td><td>φ<sub>n,REF</sub>：基準信号由来のノイズ + i<sub>n,PD</sub>：位相検出器自体のノイズ</td></tr>
+            <tr><td>LF(Loop Filter)</td><td>v<sub>n,LF</sub>：RCネットワークに起因する熱雑音など</td></tr>
+            <tr><td>VCO</td><td>φ<sub>n,VCO</sub>：最も強く影響するノイズ源、1/f² or 1/f³のプロファイル</td></tr>
+            <tr><td>Divider</td><td>φ<sub>n,DIV</sub>：分周器の雑音(整数Nなら熱雑音、分数NならDSM由来ノイズも)</td></tr>
+          </tbody>
+        </table>
+
+        <h4>🔹 開ループ伝達関数(H<sub>OL</sub>(s))</h4>
+        <p>$$H_{\text{OL}}(s) = \frac{K_{\text{PD}} \cdot K_{\text{VCO}} \cdot H_{\text{LF}}(s)}{N_1 s}$$</p>
+        <p class="note">→ VCOが"積分器"として機能するため、s分の1が含まれる</p>
+
+        <h4>🔹 H<sub>LF</sub>(s) の例(Fig. 2.2)</h4>
+        <ul class="bullets">
+          <li>2次RCフィルタを想定</li>
+          <li>零点 $\omega_z = 1/RC_1$、極 $\omega_p = 1/RC_1 + 1/RC_2$</li>
+          <li>伝達関数には極・零点のバランスで周波数特性が決まる</li>
+        </ul>
+
+        <h4>🔹 各ノイズ源に対する伝達関数(出力への影響)</h4>
+        <table class="data-table">
+          <thead><tr><th>名称</th><th>数式</th><th>特性</th></tr></thead>
+          <tbody>
+            <tr><td>$H_{\text{REF,OUT}}(s)$</td><td>$\frac{N_1 H_{\text{OL}}(s)}{1 + H_{\text{OL}}(s)}$</td><td>LPF型(低周波ノイズが通る)</td></tr>
+            <tr><td>$H_{\text{PD,OUT}}(s)$</td><td>$\frac{N_1}{K_{\text{PD}}} \cdot H_{\text{LPF}}(s)$</td><td>LPF型</td></tr>
+            <tr><td>$H_{\text{LF,OUT}}(s)$</td><td>$\frac{K_{\text{VCO}}}{s} \cdot \frac{1}{1 + H_{\text{OL}}(s)}$</td><td>BPF型(中心はω<sub>UG</sub>)</td></tr>
+            <tr><td>$H_{\text{VCO,OUT}}(s)$</td><td>$\frac{1}{1 + H_{\text{OL}}(s)}$</td><td>HPF型(高周波ノイズが通る)</td></tr>
+            <tr><td>$H_{\text{DIV,OUT}}(s)$</td><td>$-H_{\text{LPF}}(s)$</td><td>LPF型(マイナス極性)</td></tr>
+          </tbody>
+        </table>
+
+        <h4>🔹 等価ノイズ源とトレードオフ(Fig. 2.3〜2.5)</h4>
+        <ul class="bullets">
+          <li>ノイズ源を<strong>基準側(φ<sub>n,REF</sub>、i<sub>n,PD</sub>、φ<sub>n,DIV</sub>)</strong>と<strong>VCO側(φ<sub>n,VCO</sub>)</strong>に分類</li>
+          <li>PLLの<strong>LPF特性で前者を、HPF特性で後者を抑える</strong></li>
+          <li>→ <strong>帯域(ω<sub>UG</sub>)をどこに設定するかでトレードオフ</strong></li>
+        </ul>
+        <table class="data-table">
+          <thead><tr><th>状況</th><th>結果</th></tr></thead>
+          <tbody>
+            <tr><td>ω<sub>UG</sub>が広すぎると…</td><td>VCOノイズは減るけど、基準系ノイズが通る</td></tr>
+            <tr><td>ω<sub>UG</sub>が狭すぎると…</td><td>基準系ノイズは減るけど、VCOノイズが支配的になる</td></tr>
+            <tr><td>🎯 ベストは？</td><td>両者のバランスが取れた帯域に設計する(例：Fig. 2.4(a) で最小ジッター)</td></tr>
+          </tbody>
+        </table>
+
+        <div class="callout casual">
+          <p class="callout-label">🧠 まとめ(カジュアルver)</p>
+          <p>PLLって、ただ周波数を合わせるだけじゃなくて、<strong>"どのノイズをどれくらい許容するか"っていう設計そのものがめちゃ重要</strong>。<br>
+          各ノイズ源が"通りやすい"か"通りにくい"かは、<strong>ループ全体の周波数応答(伝達関数)</strong>で決まってる。<br>
+          だから「設計＝周波数バランス」ってこと。</p>
+        </div>
+      </article>
+
+      <article class="topic">
+        <h3>2.2節｜Quantization Noise and Fractional Spurs</h3>
+
+        <h4>✅ 背景：Fractional-N PLLの便利さと課題</h4>
+        <table class="data-table">
+          <thead><tr><th>内容</th><th>説明</th></tr></thead>
+          <tbody>
+            <tr><td>Fractional-N PLLとは？</td><td>分周比を非整数にして、<strong>きめ細かい周波数設定</strong>ができるPLL</td></tr>
+            <tr><td>何が課題？</td><td>分周比を"整数しか使えない"ので、<strong>DSMで近似</strong>する必要がある</td></tr>
+            <tr><td>問題点</td><td>① <strong>量子化ノイズ</strong>　② <strong>周期性によるスパー(spur)</strong></td></tr>
+          </tbody>
+        </table>
+
+        <h4>🔹 2.2.1｜Delta-Sigma Modulation(DSM)の仕組みと量子化ノイズ</h4>
+        <table class="data-table">
+          <thead><tr><th>ポイント</th><th>内容</th></tr></thead>
+          <tbody>
+            <tr><td>DSMの役割</td><td>分数分周比を<strong>整数の列で近似</strong>する(例：2, 3, 2, 2...)</td></tr>
+            <tr><td>問題</td><td>切り捨て誤差(量子化ノイズ)が出る。<strong>このノイズがPLL出力に漏れるとPNが悪化</strong></td></tr>
+            <tr><td>対策</td><td>DSMで<strong>ノイズを高周波に押し出す(ノイズシェーピング)</strong>ことで、PLLのLPFで除去可能にする</td></tr>
+          </tbody>
+        </table>
+
+        <h4>🔹 2.2.2｜Fractional Spurs の原因と対策</h4>
+        <table class="data-table">
+          <thead><tr><th>原因</th><th>説明</th></tr></thead>
+          <tbody>
+            <tr><td>スパーとは？</td><td>分周比の変動パターンが<strong>周期的</strong>だと、スペクトルに鋭いトーン(spur)が立つ</td></tr>
+            <tr><td>ランダマイズしても…</td><td>擬似乱数でも完全には周期性を排除できず、スパーは残る</td></tr>
+            <tr><td>非線形性が原因でも出る</td><td>CPやSPDなどの<strong>非線形ブロック</strong>でノイズが折り返され、<strong>低周波スパーとして出てくる</strong></td></tr>
+            <tr><td>スパーはLPFで除去できない？</td><td>スパーは<strong>低周波に現れる</strong>ため、PLLの帯域とバッティングしてしまい除去困難</td></tr>
+          </tbody>
+        </table>
+
+        <h4>🔹 2.2.3｜量子化ノイズとスパーの抑制手法(Prior Arts)</h4>
+
+        <div class="method">
+          <h5>🔧 方法①：ノイズキャンセル(DTC/IDAC)</h5>
+          <ul class="bullets">
+            <li>DSMの誤差を予測 → <strong>電流や時間で"打ち消す"</strong></li>
+            <li>⚠ キャリブレーションが必要(LMS, LUT補正)</li>
+            <li>⏱ ロック時間が長くなる、実装が複雑、予測が困難</li>
+          </ul>
+        </div>
+        <div class="method">
+          <h5>🔼 方法②：ノイズシェーピング周波数を上げる</h5>
+          <ul class="bullets">
+            <li>DSMクロック(＝f<sub>REF</sub>)を高速化 → ノイズが高域に行く</li>
+            <li>方法：高周波Xtal、参照PLL/Multiplier、2段分周など</li>
+            <li>⚠ 回路が複雑化、電力増、スパー出やすくなる、Xtalのコスト増</li>
+          </ul>
+        </div>
+        <div class="method">
+          <h5>🔁 方法③：FIR的なノイズ除去(信号合成)</h5>
+          <ul class="bullets">
+            <li>MMD出力を<strong>遅らせてズラす</strong> → 重み付き合成でノイズだけキャンセル</li>
+            <li>信号成分は共通なので影響を受けない</li>
+            <li>⚠ 複数MMDやPD、ディレイの一致性が必要で<strong>回路が大がかり</strong></li>
+          </ul>
+        </div>
+
+        <h4>🧠 まとめのまとめ：各手法の特徴とトレードオフ</h4>
+        <table class="data-table">
+          <thead><tr><th>手法</th><th>特徴</th><th>メリット</th><th>デメリット</th></tr></thead>
+          <tbody>
+            <tr><td>DTC/IDAC補償</td><td>誤差を打ち消す</td><td>ノイズ源を直接消せる</td><td>キャリブレーション必須、複雑化</td></tr>
+            <tr><td>高f<sub>REF</sub>化</td><td>ノイズを高域に逃がす</td><td>シンプルで効果大</td><td>高価・ノイズ源追加・消費電力増</td></tr>
+            <tr><td>FIR構造</td><td>信号合成でノイズ相殺</td><td>PLL構造をいじらず高精度</td><td>実装コスト・マッチングが難しい</td></tr>
+          </tbody>
+        </table>
+
+        <div class="callout casual">
+          <p class="callout-label">ひとこと要約</p>
+          <p>「Fractional-N PLLって便利だけど、その精密さゆえにノイズやスパーが悩みの種。でも、<strong>ノイズを"打ち消す"・"逃がす"・"平均して消す"</strong>っていう3つの視点で、いろんなアプローチが取られている」</p>
+        </div>
+      </article>
+
+      <article class="topic">
+        <h3>2.3節｜Chapter Summary — 一文に込められた大事なこと</h3>
+        <div class="callout">
+          <p>「この章では、PLL設計の基礎、重要なトレードオフ、そして分数型PLLの課題とその対策について解説しました。」</p>
+        </div>
+        <p class="note">✔️ 要するに、第2章は<strong>「PLLって何？」「Fractional-Nで何が難しい？」「どう工夫されてきた？」</strong>を一通り学ぶ章だったってこと。</p>
+      </article>
+
+      <article class="topic">
+        <h3>第2章全体のまとめ</h3>
+
+        <h4>✅ 2.1節：基本モデルとノイズ解析</h4>
+        <ul class="bullets">
+          <li>PLLを<strong>線形モデルで近似</strong>して、ループ伝達関数を導出</li>
+          <li>各ノイズ源の影響を、<strong>周波数応答(LPF/BPF/HPF)として定量化</strong></li>
+          <li><strong>ループ帯域(ω<sub>UG</sub>)</strong>の設定でノイズのトレードオフが決まる</li>
+          <li>参考値：ω<sub>UG</sub> ≈ 1.5MHzでジッター最小(図2.4)</li>
+        </ul>
+
+        <h4>✅ 2.2節：Fractional-N PLLの課題と対策</h4>
+        <p><strong>🌀 問題</strong> — DSMで非整数の分周比を作るけど：</p>
+        <ul class="bullets">
+          <li>🎯 量子化ノイズが出る</li>
+          <li>🎯 分周比の周期性でスパーが出る(Fractional Spurs)</li>
+        </ul>
+        <p><strong>🛠 対策</strong></p>
+        <table class="data-table">
+          <thead><tr><th>分類</th><th>内容</th></tr></thead>
+          <tbody>
+            <tr><td>💡 ノイズキャンセル</td><td>DTC/IDACで予測して打ち消す(キャリブレーション必要)</td></tr>
+            <tr><td>🔼 ノイズ周波数押し上げ</td><td>f<sub>REF</sub>やDSMクロックを高くして、ノイズを高域へ逃がす</td></tr>
+            <tr><td>🔁 FIR構造</td><td>複数信号を時間ずらして重ね合わせ、ノイズだけ相殺する</td></tr>
+          </tbody>
+        </table>
+
+        <h4>✅ 2.3節：全体まとめ</h4>
+        <ul class="bullets">
+          <li>PLL設計は<strong>「精度 × ノイズ × 安定性」</strong>のせめぎ合い</li>
+          <li>Fractional-N PLLでは「<strong>非整数性</strong>」を得る代償として「<strong>ノイズとスパー</strong>」が増える</li>
+          <li>対処法にはそれぞれトレードオフがある</li>
+          <li><strong>設計の"センス"が問われる世界</strong></li>
+        </ul>
+      </article>
+    </section>
+
+    <!-- ============ 第2章 Q&A ============ -->
+    <section id="ch2-qa" class="chapter chapter-2 qa-section">
+      <h2 class="chapter-title">💬 第2章 Q&amp;A — 読みながら浮かんだ疑問</h2>
+
+      <article class="topic">
+        <h3>2.1節</h3>
+        <div class="qa-list">
+          <div class="qa-item">
+            <p class="q"><span class="q-num">1</span>PLLって何のために使うの？</p>
+            <div class="a"><p>リファレンス信号と同じ周波数・位相の信号を生成するための回路。</p><p>周波数合成、クロック生成、データ同期などに広く使われる。</p></div>
+          </div>
+          <div class="qa-item">
+            <p class="q"><span class="q-num">2</span>リファレンス信号があるなら、それをそのまま使えばよくない？</p>
+            <div class="a"><p>リファレンス信号はたいてい周波数が低く、そのままでは目的のGHz帯などには届かない。</p><p>PLLを使えば柔軟に高周波クロックが得られる。</p></div>
+          </div>
+          <div class="qa-item">
+            <p class="q"><span class="q-num">3</span>PLLはスカラー倍する機能があるの？</p>
+            <div class="a"><p>PLL自体が直接スカラー倍するのではなく、<strong>分周器(÷N)を用いて</strong>出力周波数が f<sub>OUT</sub> = N × f<sub>REF</sub> になるよう設計されている。</p></div>
+          </div>
+          <div class="qa-item">
+            <p class="q"><span class="q-num">4</span>小数倍はどうやって作るの？</p>
+            <div class="a"><p>分数型PLL(Fractional-N PLL)で、<strong>分周比を平均的に小数にする</strong>ことで実現。</p><p>DSM(デルタシグマ変調器)などを併用して分周比を制御する。</p></div>
+          </div>
+          <div class="qa-item">
+            <p class="q"><span class="q-num">5</span>位相検出器(PD)って何？どうやって動作するの？</p>
+            <div class="a"><p>入力と出力の<strong>位相差を検出</strong>して、それをチャージポンプで<strong>電圧に変換</strong>するブロック。</p><p>この電圧がVCOを制御し、同期へと導く。</p></div>
+          </div>
+          <div class="qa-item">
+            <p class="q"><span class="q-num">6</span>なんでPDの伝達関数はK<sub>PD</sub>っていう定数なの？</p>
+            <div class="a"><p>ロック状態ではPD出力は位相差に比例し、<strong>線形近似が成立する</strong>ため。</p><p>よって K<sub>PD</sub> × Δφ という表現が使われる。</p></div>
+          </div>
+          <div class="qa-item">
+            <p class="q"><span class="q-num">7</span>v<sub>nLF</sub>はなんでその位置にあるの？</p>
+            <div class="a"><p>ループフィルタのノイズは<strong>直接VCOの制御電圧に影響</strong>する。</p><p>そのため、ループフィルタ出力にノイズ源としてモデル化される。</p></div>
+          </div>
+          <div class="qa-item">
+            <p class="q"><span class="q-num">8</span>ノイズの記号がφとかiとかvで違うのはなぜ？</p>
+            <div class="a"><p>それぞれが指す<strong>物理量が異なる</strong>から。</p><p>φは位相、iは電流、vは電圧のノイズを表す。</p></div>
+          </div>
+          <div class="qa-item">
+            <p class="q"><span class="q-num">9</span>水晶ってどうして周波数が出せるの？</p>
+            <div class="a"><p>圧電効果で<strong>特定の周波数で共振</strong>し、その振動を電気信号として取り出すことができる。</p><p>非常に高いQ値を持ち、安定な基準信号源になる。</p></div>
+          </div>
+          <div class="qa-item">
+            <p class="q"><span class="q-num">10</span>周波数を合わせる回路なのに、なんで"位相"同期回路って名前なの？</p>
+            <div class="a"><p>周波数の一致は<strong>位相差が一定であること</strong>と同義。</p><p>実際には"位相を一致させる"制御を行っている。</p></div>
+          </div>
+          <div class="qa-item">
+            <p class="q"><span class="q-num">11</span>リングオシレータって周波数変わらないんじゃないの？</p>
+            <div class="a"><p>インバータの遅延は電源電圧やバイアスで変化する。</p><p>よってリングオシレータも<strong>電圧制御発振器(VCO)として利用可能</strong>。</p></div>
+          </div>
+          <div class="qa-item">
+            <p class="q"><span class="q-num">12</span>インバータの遅延って一定じゃないの？</p>
+            <div class="a"><p>電源電圧やトランジスタのバイアス状態で<strong>遅延時間が変化</strong>する。</p><p>これにより<strong>可変遅延素子</strong>として使える。</p></div>
+          </div>
+          <div class="qa-item">
+            <p class="q"><span class="q-num">13</span>水晶の正弦波とVCOの出力って同じじゃないよね？</p>
+            <div class="a"><p>波形(正弦波／矩形波)は違っていても、<strong>ゼロクロスやエッジのタイミングが一致</strong>していれば"同期"とみなせる。</p></div>
+          </div>
+          <div class="qa-item">
+            <p class="q"><span class="q-num">14</span>矩形波ってむしろデジタル機器には都合いいの？</p>
+            <div class="a"><p>その通り。<strong>0/1の判定が明確</strong>で、<strong>エッジも立っていて扱いやすい</strong>。</p><p>クロック信号として非常に適している。</p></div>
+          </div>
+          <div class="qa-item">
+            <p class="q"><span class="q-num">15</span>極は実部が負なら安定ってのしか知らないけど、それでいいの？</p>
+            <div class="a"><p>それは基本だが、PLLのような<strong>制御系では位相マージンなどの余裕も設計上重要</strong>。</p><p>安定性を保証するためにはループ特性の詳細検討が必要。</p></div>
+          </div>
+          <div class="qa-item">
+            <p class="q"><span class="q-num">16</span>ゼロ点ってなんのためにあるの？</p>
+            <div class="a"><p>ポールによる<strong>位相遅れを相殺</strong>して、<strong>ループ安定性(位相マージン)</strong>を確保するため。</p><p>意図的にゼロを配置することでループゲイン特性を調整する。</p></div>
+          </div>
+        </div>
+      </article>
+
+      <article class="topic">
+        <h3>2.2節</h3>
+        <div class="qa-list">
+          <div class="qa-item">
+            <p class="q"><span class="q-num">1</span>分周比を周期的に変えるだけで、なぜ非整数分周になるの？</p>
+            <div class="a"><p>瞬間的には整数分周だけど、「分周比の平均値」が目標の非整数に近づくように制御されているから。</p><p>PLL全体が"平均"で一致するように働くので、出力も平均で非整数倍になる。</p></div>
+          </div>
+          <div class="qa-item">
+            <p class="q"><span class="q-num">2</span>分周比パターンが周期的だと、なぜスペクトル(スパー)が立つの？</p>
+            <div class="a"><p>周期的な変動は、周波数ドメインではトーン(spur)になる。</p><p>つまり、<strong>「変動そのものが信号」として見なされる</strong>ため。</p></div>
+          </div>
+          <div class="qa-item">
+            <p class="q"><span class="q-num">3</span>スパーを消すためにランダム化するなら、どうやって"ランダム"を作るの？</p>
+            <div class="a"><p>実際は擬似乱数(PRNG)を使う。</p><p>熱雑音などの真性ランダムは難しいので、通常はデジタルで生成する。</p></div>
+          </div>
+          <div class="qa-item">
+            <p class="q"><span class="q-num">4</span>DSMって何？ADCみたいな逐次比較で操作するの？</p>
+            <div class="a"><p>DSMは<strong>連続値(小数)を整数系列に変換</strong>する装置。</p><p>入力値と過去の出力との差を内部で保持しながら、出力平均が入力に近づくように制御している。</p></div>
+          </div>
+          <div class="qa-item">
+            <p class="q"><span class="q-num">5</span>DSMの分周比ってVCOと連動してるの？バラバラにして大丈夫？</p>
+            <div class="a"><p>連動してないでOK。VCOはPDからの制御電圧により"自動で"周波数を合わせている。</p><p>DSMが分周比を切り替えても、PLL全体でループが保たれる。</p></div>
+          </div>
+          <div class="qa-item">
+            <p class="q"><span class="q-num">6</span>DSMのクロックを速くすると、なぜノイズが高域に寄るの？</p>
+            <div class="a"><p>DSMはノイズシェーピング特性を持っていて、<strong>ノイズを高周波に追いやる構造</strong>。</p><p>その"有効帯域"がDSMのクロック周波数に比例するため。</p></div>
+          </div>
+          <div class="qa-item">
+            <p class="q"><span class="q-num">7</span>スパーが低周波に出るなら、HPFで消せばいいんじゃない？</p>
+            <div class="a"><p>一理あるけど、PLL出力の大事な信号も低域にあるから、HPFでは<strong>必要な成分まで消してしまう</strong>可能性あり。</p><p>また、スパーがPLLループ内部で発生する場合、出力段のHPFでは除去できない。</p></div>
+          </div>
+          <div class="qa-item">
+            <p class="q"><span class="q-num">8</span>ノイズの折り返し(folding)ってなに？なぜ非線形だと起きるの？</p>
+            <div class="a"><p>非線形な回路は<strong>入力信号間で周波数の合成</strong>を起こす(ミキサと同じ原理)。</p><p>これにより、<strong>高域ノイズが低域に折り返されて</strong>スパーとして現れることがある。</p></div>
+          </div>
+          <div class="qa-item">
+            <p class="q"><span class="q-num">9</span>FIRフィルタってなに？聞いたことない。</p>
+            <div class="a"><p>入力信号の「時間的にずらしたコピー」を重み付きで加算して、特定の成分だけ通すフィルタ。</p><p>PLLでは、<strong>ずれたノイズだけを打ち消して、共通の信号成分は通す</strong>ことができる。</p></div>
+          </div>
+          <div class="qa-item">
+            <p class="q"><span class="q-num">10</span>白色ノイズとFIRの関係って？</p>
+            <div class="a"><p>白色ノイズは自己相関がゼロなので、<strong>FIRのような"平均処理"でうまくキャンセルできる</strong>。</p><p>一方、信号成分は全ての遅延経路で共通なので、打ち消されない。</p></div>
+          </div>
+        </div>
+      </article>
+    </section>
+
+    <!-- ============ 第3章 まとめ ============ -->
+    <section id="ch3-summary" class="chapter chapter-3">
+      <h2 class="chapter-title">🌟 第3章：Harmonic-Mixerベースのフィードバックと発展形</h2>
+
+      <article class="topic">
+        <h3>3.1節｜Use of Harmonic-Mixer-Based Feedback</h3>
+
+        <div class="callout">
+          <p class="callout-label">🌟 この節の目的</p>
+          <p>Fractional-N PLL における<strong>量子化ノイズ</strong>や<strong>スパー</strong>の増幅問題を、<strong>Harmonic Mixer (HM)</strong> を使って根本的に回避しようという新しいアプローチを紹介する節。</p>
+        </div>
+
+        <h4>3.1.1｜Amplification of Input-referred Noise in Feedback Systems</h4>
+        <ul class="bullets">
+          <li>PLLは閉ループシステムで、入力ノイズが「<strong>1/β</strong>」で出力に現れる(βはフィードバック利得)。</li>
+          <li>Fractional-N PLLでは<strong>分周比 = 1/β</strong>だから、<strong>量子化ノイズが分周比で増幅されちゃう</strong>。</li>
+          <li>例：2.4GHz を 100MHz リファレンスから生成すると、<strong>20log(24) ≈ 27.6dB</strong> もノイズが増幅される！</li>
+          <li>👉 これを避けるために、<strong>フィードバック経路で÷Nを使わず、Mixerを使った減算(f<sub>OUT</sub> − f<sub>LO</sub>)にする。</strong></li>
+        </ul>
+
+        <h4>3.1.2｜Noise Model and Feedback Gain of Mixer-based PLLs</h4>
+        <ul class="bullets">
+          <li>通常のPLL構成に<strong>Mixer</strong>と<strong>Local Oscillator (LO)</strong>を加えた構成。</li>
+          <li>出力 f<sub>OUT</sub> と LO f<sub>LO</sub> の差をMixerで取り、<strong>f<sub>OUT</sub> − f<sub>LO</sub> = f<sub>REF</sub></strong> を保つようにループ制御。</li>
+          <li>フィードバックゲインが1(= Unity)になるため、<strong>量子化ノイズが増幅されない</strong>！</li>
+          <li>ただし、<strong>f<sub>OUT</sub> ≈ f<sub>LO</sub></strong> になってしまうと、「<strong>周波数引き込み(pulling)</strong>」のリスクがある。</li>
+          <li>👉 解決策として、<strong>Harmonic Mixer (HM)</strong> を使って <strong>f<sub>OUT</sub> − k·f<sub>LO</sub></strong> という構成にすることで、f<sub>OUT</sub>とf<sub>LO</sub>の距離をとって引き込みを回避。</li>
+        </ul>
+
+        <h4>3.1.3｜Architecture and Operation Principle of Harmonic-Mixer</h4>
+        <p>HMは普通のMixer + Frequency Multiplierとしても構成できるけど、<strong>消費電力と回路の複雑さ</strong>が問題。よく使われるアプローチは <strong>Sample-and-Hold (S/H) 操作</strong>をベースにしたHM。</p>
+
+        <div class="method">
+          <h5>🔧 Sample(サンプリング)</h5>
+          <ul class="bullets">
+            <li>インパルス列で入力波をサンプリング → 周波数領域では<strong>f<sub>SH</sub>間隔でスペクトルのコピーが発生</strong></li>
+            <li>これにより、<strong>f<sub>PLL</sub> − k·f<sub>SH</sub></strong> の差周波数成分が生成される</li>
+          </ul>
+        </div>
+        <div class="method">
+          <h5>🔧 Hold(保持)</h5>
+          <ul class="bullets">
+            <li>サンプルされた値を次のサンプリングまで維持</li>
+            <li>周波数領域では<strong>sinc関数</strong>との乗算に相当 → 高調波が減衰されて目的の成分だけが残る</li>
+          </ul>
+        </div>
+
+        <p class="note">✅ 最終的に：出力周波数 f<sub>PLL</sub>(= f<sub>OUT</sub>) と サンプリングクロック f<sub>SH</sub>(= f<sub>LO</sub>) から <strong>f<sub>OUT</sub> − k·f<sub>LO</sub></strong> 成分だけを抽出 → フィードバック信号として使う</p>
+
+        <div class="callout casual">
+          <p class="callout-label">🔁 復習チェック</p>
+          <ol>
+            <li>Fractional-N PLLでは、<strong>入力ノイズが分周比で増幅</strong>される。そのため、ループ内でのノイズが問題に。</li>
+            <li>Mixer型のフィードバックにすれば、<strong>フィードバックゲインが1</strong>になり、ノイズの増幅が起こらない。</li>
+            <li>f<sub>OUT</sub> ≈ f<sub>LO</sub> だと周波数引き込みが起きる → <strong>Harmonic Mixerで距離を離す</strong>ことで緩和。</li>
+            <li>Sample-and-Holdにより、<strong>差周波数成分(f<sub>OUT</sub> − k·f<sub>LO</sub>)</strong>を作ることができ、さらにsinc関数で<strong>他の高調波は減衰</strong>できる。</li>
+          </ol>
+        </div>
+      </article>
+
+      <article class="topic">
+        <h3>3.2節｜Triple-Loop PLL and Its Issues</h3>
+
+        <div class="callout">
+          <p class="callout-label">🌟 この節の目的</p>
+          <p>前節3.1で紹介された<strong>Harmonic MixerベースのPLL</strong>を応用して、<strong>Fractional-N PLL</strong>を本格的に実現する構成、すなわち <strong>Triple-Loop PLL</strong> を紹介し、その<strong>ノイズ抑圧の原理と課題点</strong>を分析するのがこの節の目的。</p>
+        </div>
+
+        <h4>3.2.1｜Triple-Loop PLL Architecture</h4>
+        <p>3つのPLLから構成：</p>
+        <ol>
+          <li><strong>Main PLL</strong>(HMベース)</li>
+          <li><strong>Auxiliary Integer-N PLL</strong>(整数部分)</li>
+          <li><strong>Auxiliary Fractional-N PLL</strong>(小数部分)</li>
+        </ol>
+        <p>出力周波数は：</p>
+        <p>$$f_{\text{OUT}} = \left( \frac{kN_1}{M_1} + \frac{N_2 + \alpha}{M_2} \right) f_{\text{REF}}$$</p>
+        <p>🔍 ノイズ抑制の工夫：</p>
+        <ul class="bullets">
+          <li>小数型PLLの出力には量子化ノイズとスパーが含まれるけど、それを<strong>M₂で分周</strong>してからMain PLLに入力</li>
+          <li>HMベースのMain PLLは<strong>フィードバック利得が1(unity)</strong>だから、<strong>再増幅されない！</strong></li>
+          <li>一方、整数型PLLのノイズは<strong>k/M₁倍</strong>でMain PLLに入ってくるため、→ <strong>ノイズがある程度通ってしまう</strong>(ただし量子化ノイズなどは含まれないので制御しやすい)</li>
+        </ul>
+
+        <h4>3.2.2｜Noise Transfer Functions</h4>
+        <p>各ノイズ源の<strong>伝達関数(出力への影響)</strong>を定式化して、ノイズの抑圧構造を理論的に確認：</p>
+        <table class="data-table">
+          <thead><tr><th>ノイズ源</th><th>出力への伝達関数の特徴</th><th>抑圧の構造</th></tr></thead>
+          <tbody>
+            <tr><td>Main VCOノイズ</td><td>高域通過(HPF)</td><td>PLLによくある形</td></tr>
+            <tr><td>Main PLLのPD/LOノイズ</td><td>低域通過(LPF)、DCゲイン=1</td><td>ノイズの<strong>再増幅なし！</strong></td></tr>
+            <tr><td>Integer-N VCOノイズ</td><td>バンドパス(k/M₁ゲイン)</td><td>抑圧は限定的</td></tr>
+            <tr><td>Fractional-N VCOノイズ</td><td>バンドパス(1/M₂ゲイン)</td><td><strong>M₂分の1</strong>に抑制！</td></tr>
+            <tr><td>DSM量子化ノイズ・スパー</td><td>低域通過＋(N₂+α)/M₂</td><td><strong>大幅抑制</strong>！</td></tr>
+            <tr><td>リファレンスノイズ</td><td>DCゲイン = 出力周波数/リファレンス周波数</td><td>従来と同じレベル</td></tr>
+          </tbody>
+        </table>
+        <p class="note">✔️ この解析から、Triple-Loop PLLが<strong>Fractional-N特有のノイズ</strong>に非常に強い構造であることがわかる。</p>
+
+        <h4>3.2.3｜Issues with the Triple-Loop PLL</h4>
+        <ul class="bullets">
+          <li>😫 <strong>問題点1：構成が重い！</strong> → PLLが3つも必要なので<strong>電力・面積・設計負荷が高い</strong></li>
+          <li>😖 <strong>問題点2：VCO干渉のリスク</strong> → LC-VCOを3つ使うと<strong>チップ面積が増大</strong>、<strong>カップリング(干渉)</strong>の懸念も</li>
+          <li>🧠 解決策(例)：[65]の論文では<strong>リングVCO</strong>を一部に使って面積＆干渉を回避</li>
+          <li>💡 本論文では、<strong>Triple-Loopの問題を解決する新アーキテクチャ(Dual Feedback)</strong>を提案するよ！</li>
+        </ul>
+
+        <div class="callout casual">
+          <p class="callout-label">🔁 復習チェック</p>
+          <ol>
+            <li>Triple-Loop PLLで、各PLLが果たす役割は？</li>
+            <li>小数PLLのノイズはどうやってMain PLLに入る？再増幅される？</li>
+            <li>Integer PLLのノイズが一部乗る理由は？</li>
+            <li>それでもTriple-Loop PLLが使われる理由ってなに？</li>
+            <li>この構成の課題は？今後どう乗り越えようとしている？</li>
+          </ol>
+        </div>
+      </article>
+
+      <article class="topic">
+        <h3>3.3節｜Dual-Feedback PLL</h3>
+
+        <div class="callout">
+          <p class="callout-label">🌟 この節の目的</p>
+          <p><strong>Triple-Loop PLL の複雑さとコストの高さを回避</strong>しながら、<strong>同等レベルのノイズ抑制性能</strong>を実現するために提案された、<strong>Dual-Feedback PLL</strong> という新しい構成を紹介する節！</p>
+        </div>
+
+        <h4>3.3.1｜Proposed PLL Architecture(提案回路の構造)</h4>
+        <p><strong>💡 基本構成</strong></p>
+        <ul class="bullets">
+          <li><strong>補助PLLは1つだけ</strong>(整数N型)</li>
+          <li>でも、<strong>メインPLLに2つのフィードバック経路</strong>(HMベースとMMDベース)</li>
+        </ul>
+        <p><strong>🔄 動作のカギ</strong></p>
+        <ul class="bullets">
+          <li><strong>f<sub>OUT</sub> − k·f<sub>INT</sub> / M₁ = f<sub>REF</sub> / (N₂ + α)</strong> が成立すればループロック！</li>
+        </ul>
+        <p>式 (3.17) を使って f<sub>OUT</sub> を表現できる：</p>
+        <p>$$f_{\text{OUT}} = \frac{kN_1}{M_1} \cdot \frac{N_2 + \alpha}{N_2 + \alpha - 1} \cdot f_{\text{REF}}$$</p>
+        <p><strong>🔧 周波数可変範囲の要件</strong></p>
+        <ul class="bullets">
+          <li><strong>粗調整：</strong> N₁ を変える(補助PLL)</li>
+          <li><strong>微調整：</strong> N₂+α を変える(メインPLL)</li>
+        </ul>
+        <p>式 (3.21) の不等式を満たす必要あり：</p>
+        <p>$$N_1 \geq \frac{(N_2 + \alpha)_{\min} - 1}{1 - \frac{(N_2 + \alpha)_{\min}}{(N_2 + \alpha)_{\max}}}$$</p>
+
+        <h4>3.3.2｜Noise Transfer Functions(ノイズ伝達関数)</h4>
+        <p><strong>🔄 フィードバックゲインの合成</strong></p>
+        <ul class="bullets">
+          <li>HMベースのゲイン → <strong>1</strong></li>
+          <li>MMDベースのゲイン → <strong>1 / (N₂ + α)</strong></li>
+          <li>符号が逆なので、全体の負帰還ゲインは：$1 - \frac{1}{N_2 + \alpha}$</li>
+        </ul>
+
+        <p><strong>📉 各ノイズ源の影響</strong></p>
+        <table class="data-table">
+          <thead><tr><th>ノイズ源</th><th>特徴</th></tr></thead>
+          <tbody>
+            <tr><td>VCOノイズ(メイン)</td><td>HPF特性(従来と同じ)</td></tr>
+            <tr><td>基準系ノイズ(メイン)</td><td>LPF特性、DCゲイン ≈ 1(厳密には $\frac{N_2 + \alpha}{N_2 + \alpha - 1}$)</td></tr>
+            <tr><td>DSM量子化ノイズ・スパー</td><td><strong>メイン入力で直接発生 → 増幅されずに済む！</strong> Triple-Loopより簡素</td></tr>
+            <tr><td>補助PLLのノイズ</td><td>Triple-Loopと同様、<strong>帯域設計で抑制可能</strong>(f<sub>UG,INT</sub> ≫ f<sub>UG,MAIN</sub>)</td></tr>
+          </tbody>
+        </table>
+
+        <h4>✅ Triple-loopと比較したときのメリット</h4>
+        <table class="data-table">
+          <thead><tr><th>項目</th><th>Triple-loop</th><th>Dual-feedback</th></tr></thead>
+          <tbody>
+            <tr><td>PLL数</td><td>3個</td><td><strong>2個(簡素！)</strong></td></tr>
+            <tr><td>DSMノイズ抑制</td><td>増幅 → 減衰で実現</td><td><strong>最初から増幅なしで出力へ</strong></td></tr>
+            <tr><td>伝達関数のLPF数</td><td>2段LPF</td><td><strong>1段LPF(設計しやすい)</strong></td></tr>
+            <tr><td>フィードバック構成</td><td>3ループ</td><td><strong>2経路のフィードバックを1つのループで処理</strong></td></tr>
+          </tbody>
+        </table>
+
+        <div class="callout casual">
+          <p class="callout-label">📝 復習チェック</p>
+          <ol>
+            <li>Dual-feedback PLLでは、<strong>なぜ補助PLLは1つだけ</strong>で済むの？</li>
+            <li>式 (3.17) から、f<sub>OUT</sub> はどんなパラメータで決まる？</li>
+            <li>DSMノイズが増幅されないのはなぜ？</li>
+            <li>Triple-loopと比べて、Dual-feedbackの<strong>設計や回路的なメリット</strong>は？</li>
+          </ol>
+        </div>
+      </article>
+    </section>
+
+    <!-- ============ 第3章 Q&A ============ -->
+    <section id="ch3-qa" class="chapter chapter-3 qa-section">
+      <h2 class="chapter-title">💬 第3章 Q&amp;A — 読みながら浮かんだ疑問</h2>
+
+      <article class="topic">
+        <h3>3.1節</h3>
+        <div class="qa-list">
+          <div class="qa-item">
+            <p class="q"><span class="q-num">1</span>「ノイズをループで"増幅させない"」ってどういうこと？</p>
+            <div class="a"><p>今までのPLLでは、<strong>量子化ノイズなどのノイズも信号と一緒にループ内で増幅されていた</strong>。</p><p>回路には「これはノイズ」「これは信号」という認識がないから、<strong>一緒くたに増幅される</strong>。</p><p>HM型では、<strong>フィードバックの構造自体を変える</strong>ことで、ノイズを増幅させない仕組みになっている。</p></div>
+          </div>
+          <div class="qa-item">
+            <p class="q"><span class="q-num">2</span>「閉ループの利得が1/β」って、A/(1+Aβ) じゃないの？</p>
+            <div class="a"><p>その通り！でも、<strong>Aβ ≫ 1(オープンループゲインが十分大きい)という条件下</strong>では、A/(1+Aβ) ≈ 1/β と近似できる。これは制御工学でもよくある考え方。</p></div>
+          </div>
+          <div class="qa-item">
+            <p class="q"><span class="q-num">3</span>Phase Noise(PN)が分周で減っても、ジッターは減らないって本当？</p>
+            <div class="a"><p>うん、それがとても大事なポイント！</p><p>PN(周波数領域の揺らぎ)は分周により <strong>1/N² に減少</strong>するけど、<strong>周期がN倍になる</strong>ので、<strong>時間軸での揺らぎ(ジッター)は変わらない</strong>。</p><p>「PNが減った＝ジッターも減った」ではないことに注意。</p></div>
+          </div>
+          <div class="qa-item">
+            <p class="q"><span class="q-num">4</span>「f<sub>OUT</sub> − f<sub>LO</sub>」の減算をMixerで実現するのは理想ってだけ？</p>
+            <div class="a"><p>ううん、理想というより<strong>実際にそういう構成が存在して動作してる</strong>よ。</p><p>ただし普通のMixerだとf<sub>OUT</sub>とf<sub>LO</sub>が近くなるから、次の質問のように問題がある。</p></div>
+          </div>
+          <div class="qa-item">
+            <p class="q"><span class="q-num">5</span>周波数引き込み(frequency pulling)ってなに？</p>
+            <div class="a"><p>近い周波数で発振している2つの発振器(例：VCOとLO)が<strong>相互に影響して周波数が引っ張られる現象</strong>。</p><p>共振や磁気・電源・基板結合などの要因で起こる。</p><p>LC発振器だと特に起こりやすい。</p></div>
+          </div>
+          <div class="qa-item">
+            <p class="q"><span class="q-num">6</span>分周器型PLLではfrequency pullingの問題はなかったの？</p>
+            <div class="a"><p>そもそも<strong>分周器型ではf<sub>OUT</sub>とf<sub>REF</sub>の周波数が十分離れてる</strong>から、pullingの心配はほとんどない。</p><p>でもMixer型では f<sub>OUT</sub> ≈ f<sub>LO</sub> になりがちなので、pullingが問題になる。</p></div>
+          </div>
+          <div class="qa-item">
+            <p class="q"><span class="q-num">7</span>じゃあ f<sub>OUT</sub> ≈ k·f<sub>LO</sub> にしても pulling 起こるんじゃない？</p>
+            <div class="a"><p>よく気づいたね！確かに k·f<sub>LO</sub> ≈ f<sub>OUT</sub> なら、<strong>高調波による引き込みのリスク</strong>は残る。</p><p>だからさらに、<strong>kと分周比が互いに素になるようにして引き込みを抑える</strong>工夫がされるの。</p></div>
+          </div>
+          <div class="qa-item">
+            <p class="q"><span class="q-num">8</span>「互いに素」ってどういう意味で効果あるの？</p>
+            <div class="a"><p>kと分周比が互いに素(＝共通因数がない)なら、<strong>高調波成分がフィードバック経路で重ならない</strong>可能性が高くなる。</p><p>結果として、<strong>引き込みを抑える</strong>のに有効になる。</p></div>
+          </div>
+          <div class="qa-item">
+            <p class="q"><span class="q-num">9</span>Sample-and-Holdってどういうもの？</p>
+            <div class="a"><p>Sample(サンプル)：<strong>一定周期で入力をインパルス列でサンプリングする</strong>。</p><p>Hold(ホールド)：<strong>1サンプル分を次のサンプルまで保持する(矩形波との畳み込み)</strong>。</p><p>結果として、<strong>f<sub>OUT</sub> − k·f<sub>LO</sub> の成分が抽出できる</strong>。これをフィードバックに使う。</p></div>
+          </div>
+          <div class="qa-item">
+            <p class="q"><span class="q-num">10</span>sinc関数の「ノッチ」ってなに？</p>
+            <div class="a"><p>sinc関数は周波数領域で、<strong>整数倍の周波数でゼロ</strong>(＝ノッチ)になる特徴を持ってる。</p><p>これにより、<strong>目的外の周波数成分が抑圧される</strong>。</p></div>
+          </div>
+          <div class="qa-item">
+            <p class="q"><span class="q-num">11</span>エイリアス(折り返し)とかは大丈夫？</p>
+            <div class="a"><p>実際にはS/H回路にも<strong>非理想性や混信の可能性</strong>がある。</p><p>本文にもあったけど、<strong>詳細は4章で説明される予定</strong>。</p></div>
+          </div>
+        </div>
+      </article>
+    </section>
+  </main>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/contrib/auto-render.min.js"></script>
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+  if (window.renderMathInElement) {
+    renderMathInElement(document.body, {
+      delimiters: [
+        { left: "$$", right: "$$", display: true },
+        { left: "$", right: "$", display: false }
+      ]
+    });
+  }
+});
+</script>
+</body>
+</html>
