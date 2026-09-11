@@ -48,6 +48,7 @@ incremental_db/
 output_files/
 
 # LaTeX(latexmk/uplatex)コンパイル生成物
+# aux_dir設定により中間ファイルは各プロジェクトのbuild/配下、最終PDFのみ元ディレクトリに出力される
 *.aux
 *.bbl
 *.blg
@@ -58,4 +59,5 @@ output_files/
 *.toc
 *.fmt
 uplatex*.fls
-中間報告書/main.pdf
+中間報告書/build/
+中間報告書/中間報告書.pdf
