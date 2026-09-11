@@ -31,6 +31,10 @@ Thumbs.db
 # Git関連
 *.orig
 
+# Office一時ファイル・エクスポートzip
+~$*
+*.zip
+
 # その他
 node_modules/
 dist/
