@@ -46,3 +46,16 @@ db/
 hc_output/
 incremental_db/
 output_files/
+
+# LaTeX(latexmk/uplatex)コンパイル生成物
+*.aux
+*.bbl
+*.blg
+*.dvi
+*.fdb_latexmk
+*.fls
+*.synctex.gz
+*.toc
+*.fmt
+uplatex*.fls
+中間報告書/main.pdf

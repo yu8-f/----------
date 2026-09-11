@@ -1,18 +1,6 @@
-$bibtex = 'pbibtex';
-$makeindex = 'mendex -U %O -o %D %S';
-$pdf_mode  = 3;
+$latex     = 'uplatex %O -synctex=1 -interaction=nonstopmode %S';
+$bibtex    = 'pbibtex %O %B';
+$makeindex = 'mendex %O -o %D %S';
 $dvipdf    = 'dvipdfmx %O -o %D %S';
-$latex     = 'internal mylatex uplatex  %A %O %S';
-$pdflatex  = 'internal mylatex pdflatex %A %O %S';
-$clean_ext = "$clean_ext fmt";
-
-sub mylatex {
-    my ($engine, $base, @args) = @_;
-    my $com = join(' ', @args);
-    unless (-e "$base.fmt"){
-        print "mylatex: making $base.fmt in ini mode... \n";
-        Run_subst("$engine -ini -jobname=\"$base\" \\\&$engine mylatexformat.ltx %S");
-    }
-    print "mylatex: $base.fmt detected, so running normal latex... \n";
-    return Run_subst("$engine -fmt $base $com");
-}
+$pdf_mode  = 3;
+$max_repeat = 5;
