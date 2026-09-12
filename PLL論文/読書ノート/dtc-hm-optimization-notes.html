@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>DTC/HM方式Fractional-N PLL 最適化論文 読書ノート</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.css">
+<style>
+:root {
+  --bg:#f6f5f2; --bg-card:#fff; --text:#2b2a28; --text-muted:#6b6862; --border:#e4e1da;
+  --accent:#3a8a63; --accent-soft:#eaf6ef;
+  --callout-bg:#fbf7ec; --callout-border:#e8dcb0;
+  --casual-bg:#f1f0fb; --casual-border:#d9d6f2;
+  --warn-bg:#fdeee9; --warn-border:#f0c9ba;
+  --ana-bg:#eef6f0; --ana-border:#c4e2cd;
+  --rel-bg:#eaf1f9; --rel-border:#b9d3ea;
+  --code-bg:#f0efec; --shadow:0 1px 3px rgba(0,0,0,.06);
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg:#1c1b19; --bg-card:#262523; --text:#eae8e3; --text-muted:#a39e93; --border:#3a3835;
+    --accent:#7ecba0; --accent-soft:#1f3a2c;
+    --callout-bg:#33301f; --callout-border:#57502c;
+    --casual-bg:#2a2840; --casual-border:#423e63;
+    --warn-bg:#3a2820; --warn-border:#6b4636;
+    --ana-bg:#1e3329; --ana-border:#2f5140;
+    --rel-bg:#1c2c3d; --rel-border:#2c4863;
+    --code-bg:#302e2b; --shadow:0 1px 3px rgba(0,0,0,.3);
+  }
+}
+* { box-sizing:border-box; }
+body { margin:0; background:var(--bg); color:var(--text);
+  font-family:"Hiragino Sans","Yu Gothic","Segoe UI",system-ui,sans-serif; line-height:1.85; }
+.layout { display:flex; max-width:1180px; margin:0 auto; align-items:flex-start; }
+.sidebar { position:sticky; top:0; flex:0 0 230px; height:100vh; overflow-y:auto;
+  padding:26px 16px; border-right:1px solid var(--border); font-size:.88rem; }
+.sidebar h1 { font-size:1rem; margin:0 0 4px; }
+.sidebar .src { font-size:.76rem; color:var(--text-muted); margin:0 0 18px; }
+.sidebar a { display:block; padding:5px 9px; margin:1px 0; border-radius:6px;
+  color:var(--text); text-decoration:none; font-size:.85rem; }
+.sidebar a:hover { background:var(--accent-soft); }
+main { flex:1; min-width:0; padding:30px 44px 100px; overflow-x:hidden; max-width:100%; }
+.page-header { margin-bottom:34px; padding-bottom:18px; border-bottom:1px solid var(--border); }
+.page-header h1 { margin:0 0 10px; font-size:1.5rem; line-height:1.4; }
+.page-header p { margin:6px 0; color:var(--text-muted); }
+.sec { margin-bottom:44px; scroll-margin-top:16px; }
+.sec > h2 { font-size:1.28rem; padding-bottom:9px; border-bottom:2px solid var(--accent); margin-bottom:22px; }
+.card { background:var(--bg-card); border:1px solid var(--border); border-radius:12px;
+  padding:22px 26px; margin-bottom:20px; box-shadow:var(--shadow); overflow-wrap:anywhere; }
+.card h3 { margin-top:0; font-size:1.1rem; color:var(--accent); }
+.card h4 { font-size:.98rem; margin:20px 0 8px; }
+ul { padding-left:1.3em; margin:8px 0 14px; }
+li { margin-bottom:5px; }
+.note { color:var(--text-muted); font-size:.92rem; }
+.callout { background:var(--callout-bg); border:1px solid var(--callout-border);
+  border-radius:10px; padding:13px 17px; margin:12px 0 18px; }
+.callout p:last-child { margin-bottom:0; }
+.callout-label { font-weight:700; font-size:.84rem; margin:0 0 6px; color:var(--text-muted); }
+.callout.ana { background:var(--ana-bg); border-color:var(--ana-border); }
+.callout.casual { background:var(--casual-bg); border-color:var(--casual-border); }
+.callout.warn { background:var(--warn-bg); border-color:var(--warn-border); }
+.callout.rel { background:var(--rel-bg); border-color:var(--rel-border); }
+.data-table { width:100%; border-collapse:collapse; margin:12px 0 18px; font-size:.9rem; }
+.data-table th,.data-table td { border:1px solid var(--border); padding:8px 11px; text-align:left; vertical-align:top; }
+.data-table th { background:var(--code-bg); font-weight:700; }
+.tbl-scroll { overflow-x:auto; }
+.fig { margin:16px 0; }
+.fig img { width:100%; max-width:640px; display:block; border:1px solid var(--border);
+  border-radius:8px; background:#fff; padding:8px; }
+.fig figcaption { font-size:.82rem; color:var(--text-muted); margin-top:6px; }
+.katex-display { overflow-x:auto; overflow-y:hidden; padding:4px 0; }
+</style>
+</head>
+<body>
+<div class="layout">
+  <nav class="sidebar">
+    <h1>DTC/HM最適化論文ノート</h1>
+    <p class="src">Zhu, Osada, Zhang, Iizuka, "Optimization of DTC-Based and Harmonic-Mixer-Based Fractional-N PLLs" (IEEE TCAS-I, 2025)</p>
+    <a href="index.html" style="font-weight:700;">← 目次にもどる</a>
+    <a href="#zero">0. この論文を超ざっくり</a>
+    <a href="#background">1. 背景：2つのQ-noise対策</a>
+    <a href="#method">2. 手法：NSGA-IIによる最適化</a>
+    <a href="#lcvco">3. LC-VCOでの比較</a>
+    <a href="#rvco">4. リングVCOでの比較</a>
+    <a href="#thesis-rel">5. 卒論との関係</a>
+    <a href="#depth">6. 深掘り箇所 / 飛ばして良い箇所</a>
+    <a href="#glossary">7. 用語補足</a>
+  </nav>
+  <main>
+    <header class="page-header">
+      <h1>Optimization of DTC-Based and Harmonic-Mixer-Based Fractional-N PLLs: Comparative Analysis of Jitter and Power Trade-Offs 読書ノート</h1>
+      <p>Yuyang Zhu, Masaru Osada, Haoming Zhang, Tetsuya Iizuka, <em>IEEE Transactions on Circuits and Systems&mdash;I: Regular Papers</em>, vol.&nbsp;72, no.&nbsp;8, pp.&nbsp;3872&ndash;3885, Aug. 2025.（オープンアクセス、CC BY 4.0）</p>
+      <p class="note">著者に長田将さん（先行博論の著者）と飯塚教授本人が入っている、飯塚研の直近の論文。図は本文 PDF（<code>参考論文/</code>）から切り出したもの。個人の学習用。</p>
+    </header>
+
+    <!-- 0 -->
+    <section id="zero" class="sec">
+      <h2>0. この論文を超ざっくり</h2>
+      <div class="card">
+        <p>NSGA-II（多目的進化アルゴリズム）を使って、Q-noise対策の異なる2つのFractional-N PLLアーキテクチャ&mdash;&mdash;<strong>DTCベース</strong>と<strong>HMベースDual-Feedback</strong>&mdash;&mdash;の「ジッタ vs 消費電力」の最適トレードオフを数値的に求め、比較した論文。</p>
+        <p>結論だけ先に言うと：<strong>LC-VCOならHMベースDual-Feedbackがわずかに有利、リングVCO（RVCO）ならDTCベースが有利</strong>という、VCOの種類によって逆転する結果が出た。</p>
+        <div class="callout casual">
+          <p class="callout-label">これだけ覚えて次へ</p>
+          <p>「どっちが優れているか」は一概には言えず、VCOの種類（LCかリングか）で答えが変わる。この論文はその条件分けを初めて定量的に示した。</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 1 -->
+    <section id="background" class="sec">
+      <h2>1. 背景：2つのQ-noise対策アーキテクチャ</h2>
+      <div class="card">
+        <p>Fractional-N PLLは分周器の帰還路にΔΣ変調器（DSM）を使うため、量子化ノイズ（Q-noise）が帰還ゲイン（÷N）で N 倍に増幅されてしまう（<a href="thesis-notes.html">長田博論ノート</a>で扱っている話そのもの）。この論文が比較する2つの対策は：</p>
+        <div class="fig">
+          <img src="figures/optimization-paper/fig1.png" alt="Fig.1 conventional / DTC-based / HM-based dual-feedback PLLのブロック図">
+          <figcaption>Fig.1　(a) 従来のFractional-N PLL、(b) DTCベースPLL、(c) HMベースDual-Feedback PLL。</figcaption>
+        </div>
+        <h4>(b) DTCベース</h4>
+        <ul>
+          <li>DTC（Digital-to-Time Converter）が基準クロック側に遅延を作り、DSM由来の位相誤差を直接打ち消す。</li>
+          <li>DTCはPVT変動に弱く、LMSアルゴリズムなどによる線形性・ゲインの<strong>キャリブレーション</strong>が必須（回路・収束時間が余分にかかる）。</li>
+        </ul>
+        <h4>(c) HMベースDual-Feedback</h4>
+        <ul>
+          <li>高調波ミキサ（HM）で「周波数の引き算」を行い、帰還ゲインを1にする&mdash;&mdash;割り算(÷N)ではないのでQ-noiseが増幅されない。</li>
+          <li>キャリブレーション不要で頑健だが、HM用のLO信号を作る<strong>外部PLLが1つ余分に必要</strong>（＝主PLL＋外部PLLの2ループ構成）。</li>
+        </ul>
+        <div class="callout rel">
+          <p class="callout-label">長田博論との関係</p>
+          <p>(c)のHMベースDual-Feedback構成は、まさに<a href="thesis-notes.html">長田博論ノート</a>第3章の主提案そのもの（Osada et al., ISSCC-SSCL 2020, 論文中の参照[14]）。この論文はそれとDTCベースを、初めて同じ土俵（NSGA-IIによる数値最適化）で定量比較している。</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 2 -->
+    <section id="method" class="sec">
+      <h2>2. 手法：NSGA-IIによる多目的最適化</h2>
+      <div class="card">
+        <h4>なぜ手計算ではなくアルゴリズムを使うのか</h4>
+        <p>PLLのアーキテクチャが複雑になるほど、決定すべき変数（各ブロックの消費電力、ループ帯域幅など）が増え、ジッタと電力の関係を近似式だけで見通すのが難しくなる。そこで<strong>MOEA（多目的進化アルゴリズム）</strong>、具体的には<strong>NSGA-II</strong>（Non-dominated Sorting Genetic Algorithm II）を使い、「ジッタを最小化」「電力を最小化」という相反する2目的を同時に最適化する。</p>
+        <ul>
+          <li><strong>決定変数（染色体）</strong>：各ブロックの消費電力（VCO・DTC・PD・HMなど）とループ帯域幅 $f_\text{UGB}$。</li>
+          <li><strong>目的関数</strong>：積分RMSジッタ $\sigma_j$ と総消費電力 $P_\text{tot}$（の2つ）。</li>
+          <li>出力は単一の最適解ではなく<strong>パレート最適解の集合</strong>&mdash;&mdash;ジッタ重視〜電力重視まで幅を持った「最良のトレードオフ曲線」。</li>
+        </ul>
+        <p>妥当性検証として、まず単純なInteger-N PLLをNSGA-IIで最適化し、Razavi(2021)の近似計算式ベースの結果と比較。300世代（個体数500）でよく一致することを確認してから、本題のDTCベース・HMベース比較に進んでいる。Matlabで5分弱で計算が終わる、と書かれている。</p>
+        <div class="callout rel">
+          <p class="callout-label">matlab/ フォルダとの関係（推測）</p>
+          <p>このリポジトリの <code>matlab/NSGA-II_for_DTC_onlyVCO/</code> や <code>matlab/TCAS_DATA_CODE/FIG*/{DTC,Frac,HM,...}/</code> は、フォルダ名（TCAS = この論文の掲載誌）・図番号（FIG5, FIG8 など）から見て、<strong>この論文の図5・8・9・11を再現するための実装そのもの</strong>である可能性が高い。もしこの先マスターがNSGA-IIコードを読み書きするなら、この論文の式(1)〜(20)がその元ネタになっているはず。</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 3 -->
+    <section id="lcvco" class="sec">
+      <h2>3. LC-VCOでの比較（Sec. III）</h2>
+      <div class="card">
+        <p>基準周波数50&thinsp;MHz、出力周波数3.103&thinsp;GHzで統一し、Integer-N・従来Fractional-N・DTCベース・HMベースDual-Feedbackの4アーキテクチャを比較。</p>
+        <div class="fig">
+          <img src="figures/optimization-paper/fig4.png" alt="Fig.4 3アーキテクチャのブロック図と線形モデル">
+          <figcaption>Fig.4　(a)従来Fractional-N、(b)DTCベース、(c)HMベースDual-Feedbackのブロック図・線形モデル。全て50&thinsp;MHz基準・3.103&thinsp;GHz出力。</figcaption>
+        </div>
+        <p>Dual-Feedback (c) は外部PLL（4.5&thinsp;GHz、÷3でLO生成）＋主PLL（103&thinsp;MHz入力）の2ループで、6個の決定変数（$f_\text{UGB1}, f_\text{UGB2}, P_\text{VCO1}, P_\text{VCO2}, P_\text{PD}, P_\text{HM}$）を持つ、と一番変数が多い。</p>
+
+        <h4>結果</h4>
+        <div class="fig">
+          <img src="figures/optimization-paper/fig5.png" alt="Fig.5 VCOとDTC電力のみ考慮したジッタ電力最適化結果">
+          <figcaption>Fig.5　VCO・DTC電力のみを考慮した場合のジッタ/電力トレードオフ。</figcaption>
+        </div>
+        <div class="fig">
+          <img src="figures/optimization-paper/fig8.png" alt="Fig.8 PDとHMも考慮したジッタ電力最適化結果、FoMコンター・アプリ要求線つき">
+          <figcaption>Fig.8　PD・HMの電力・雑音も含めた最終結果。FoMコンター（灰・黒線）と、28&thinsp;GHz ADC用（150&thinsp;fs）・256QAM用（400&thinsp;fs）のジッタ要求ラインつき。</figcaption>
+        </div>
+        <ul>
+          <li>DTCベース・HMベースDual-Feedbackは、どのジッタ・電力条件でも従来Fractional-Nより明確に優れる。</li>
+          <li><strong>Dual-FeedbackはDTCベースよりわずかに良い</strong>&mdash;&mdash;特に中程度のジッタ・電力域（100〜200&thinsp;fs付近、実用上重要な域）で差が目立つ。ただし低電力・高ジッタ域ではその差はほぼ消える。</li>
+          <li>どちらもConventional Integer-N PLLには届かない（Q-noiseが完全にゼロにはならないため）。</li>
+        </ul>
+        <div class="callout">
+          <p class="callout-label">なぜDual-Feedbackが（わずかに）有利なのか</p>
+          <p>外部PLLを広帯域・主PLLを狭帯域に設計できるため、①主PLLの狭帯域化でDSMのQ-noiseを十分に抑えられる、②外部PLLの広帯域化と主PLLのローパス特性で、外部PLL自身のノイズも抑えられる&mdash;&mdash;という「2段構えのフィルタリング」が効く。ただし低電力域では両VCOとも最低消費電力に張り付き、この余裕がなくなって優位性が薄れる。</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 4 -->
+    <section id="rvco" class="sec">
+      <h2>4. リングVCO（RVCO）での比較（Sec. IV）</h2>
+      <div class="card">
+        <p>MIMOなど複数PLLが必要な用途ではRVCOが省面積で好まれる。しかしRVCOはLC-VCOよりノイズが大きく、特に低オフセット周波数でのフリッカーノイズ（$-30$&thinsp;dB/decの傾き）が無視できない。</p>
+        <div class="fig">
+          <img src="figures/optimization-paper/fig9.png" alt="Fig.9 RVCOの位相雑音プロット、フリッカーコーナー5MHz">
+          <figcaption>Fig.9　RVCO（3.103&thinsp;GHz）の位相雑音。フリッカーコーナーを5&thinsp;MHzと仮定。</figcaption>
+        </div>
+        <p>RVCOのノイズが大きい分、最適帯域幅は広く取る必要がある。そこでHMベースDual-Feedbackには、長田博論第5章の技術である<strong>PDLPF（Phase-Domain Low-Pass Filtering、nested-PLL）</strong>を追加した構成（Osada et al., JSSC 2024, 参照[15]）も比較に加えている。</p>
+        <div class="fig">
+          <img src="figures/optimization-paper/fig10.png" alt="Fig.10 PDLPF付きHMベースDual-FeedbackPLLのブロック図と線形モデル">
+          <figcaption>Fig.10　(a)ブロック図・(b)線形モデル：HMベースDual-Feedback + PDLPF（nested-PLLで主PLLの帰還路をさらにフィルタする）。</figcaption>
+        </div>
+        <div class="fig">
+          <img src="figures/optimization-paper/fig11.png" alt="Fig.11 RVCOでのジッタ電力最適化結果">
+          <figcaption>Fig.11　RVCOでのジッタ/電力トレードオフ。DTCベース（紫）がDual-Feedback（緑・オレンジ）を上回る&mdash;&mdash;LC-VCOのFig.5/8とは逆の順位。</figcaption>
+        </div>
+        <ul>
+          <li>PDLPF＋split-feedback dividerを足すとDual-Feedback自体の性能は改善するが、<strong>それでもDTCベースには届かない</strong>。</li>
+          <li>RVCOではLC-VCOの場合と<strong>優劣が逆転</strong>する。</li>
+        </ul>
+        <div class="callout">
+          <p class="callout-label">なぜ逆転するのか</p>
+          <p>RVCOはノイズが大きいので最適帯域幅が広がる。Dual-Feedbackの追加ノイズ源は「帯域幅の4乗に比例して悪化する、整形されたQ-noise」であり、帯域拡大に弱い。一方DTCベースの追加ノイズ（DTC自身の熱雑音）はフラットな白色雑音なので、帯域が広がっても相対的に悪化しにくい。この非対称性がRVCOでの逆転を生む。</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 5 -->
+    <section id="thesis-rel" class="sec">
+      <h2>5. マスターの卒論との関係</h2>
+      <div class="card">
+        <p>この論文は先行研究というより、<strong>同じ研究室（飯塚研）の直近の姉妹研究</strong>&mdash;&mdash;長田さん自身とマスターの指導教員（飯塚教授）が著者に入っている。マスターの卒論テーマ（HMベース／Dual-Feedback構成、低雑音・広チューニングレンジPLL）に直結する内容が多い。</p>
+        <ul>
+          <li><strong>VCO選択による優劣の逆転が定量化されている</strong>&mdash;&mdash;「LC-VCOならDual-Feedbackが（わずかに）有利、RVCOならDTCベースが有利」という結果は、卒論でVCOの選び方や性能限界を議論する際にそのまま論拠として使える。</li>
+          <li><strong>雑音源の切り分けが整理されている</strong>&mdash;&mdash;外部PLLノイズ・DSMのQ-noise・主PLL VCOノイズ・HM自身の熱雑音（式14〜16）という整理は、卒論の雑音バジェット表を作るときにそのまま転用できる形。</li>
+          <li><strong>Q-noiseと電力の近似関係（式17・18）</strong>&mdash;&mdash;AM-GM不等式を使って「最適設計ではPLL消費電力がジッタの$-2.5$乗に比例する」という近似を導出している。これは従来Fractional-N PLLに対する式だが、同様の手法をDual-Feedbackに適用すれば、卒論の設計指針を式の形で示せるかもしれない。</li>
+          <li><strong>NSGA-IIのコード基盤</strong>&mdash;&mdash;<code>matlab/</code>配下の実装がこの論文の再現コードだとすると、決定変数の設定範囲（Table&nbsp;II・III）や仮定した雑音レベル（式14〜16、-160/-170/-140&thinsp;dBc/Hz@1mWなど）は、そのままシミュレーションの初期値・妥当性チェックに使える。</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- 6 -->
+    <section id="depth" class="sec">
+      <h2>6. 深掘り価値がある箇所 / 飛ばしていい箇所</h2>
+      <div class="card">
+        <h4>深掘りする価値あり</h4>
+        <ul>
+          <li>Sec.&nbsp;III-B・Sec.&nbsp;IV-Bの定性的な議論（Fig.5〜6、Fig.8、Fig.11の「なぜこの傾向になるか」の説明部分）。卒論の考察パートの書き方の参考になる。</li>
+          <li>式(1)〜(16)の雑音モデル定義（VCO位相雑音、DSMノイズ、PD/DTC/HMの熱雑音の仮定値）。数値そのものを卒論のシミュレーション設定に流用できる可能性が高い。</li>
+          <li>Table&nbsp;II・III（決定変数の範囲設定）。NSGA-IIコードを触るなら必読。</li>
+        </ul>
+        <h4>飛ばしてよい</h4>
+        <ul>
+          <li>Fig.6の4分割・位相雑音プロットの細部（傾向はFig.5の説明で足りる）。</li>
+          <li>Sec.&nbsp;IIのNSGA-IIアルゴリズム自体の一般論（dominance/crowdingの仕組みなど）&mdash;&mdash;コードを自分で書き換えない限り不要。</li>
+          <li>参考文献リスト・著者紹介。</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- 7 -->
+    <section id="glossary" class="sec">
+      <h2>7. 用語・前提の補足</h2>
+      <div class="card">
+        <div class="tbl-scroll">
+        <table class="data-table">
+          <thead><tr><th>用語</th><th>意味</th></tr></thead>
+          <tbody>
+            <tr><td>MOEA</td><td>Multi-Objective Evolutionary Algorithm（多目的進化アルゴリズム）。複数の相反する目的を同時に最適化する遺伝的アルゴリズムの総称。</td></tr>
+            <tr><td>NSGA-II</td><td>MOEAの代表的手法。非優越ソート＋混雑度（crowding）でパレート最適解の多様性を保ちながら世代を進める。</td></tr>
+            <tr><td>パレート最適解</td><td>「一方の目的を改善すると必ずもう一方が悪化する」解の集合。単一の正解ではなく、トレードオフ曲線として得られる。</td></tr>
+            <tr><td>FoM（Figure of Merit）</td><td>式(2)：$\mathrm{FoM}=10\log\dfrac{f_\text{OUT}^2}{f^2 S_{n,\text{VCO}}(f)P_\text{VCO}}$。位相雑音と電力を1つの指標にまとめたもの。値が大きいほど良い。</td></tr>
+            <tr><td>SPD（Sampling Phase Detector）</td><td>サンプリング型位相検出器。式(12)のようなsinc特性（$\sin(\pi f T_\text{CK})/(\pi f T_\text{CK})$）を持つ。Dual-Feedbackの外部PLL（type-I）で使われる。</td></tr>
+            <tr><td>PDLPF</td><td>Phase-Domain Low-Pass Filtering。nested-PLL（内側にもう1つPLLを入れる）で、主PLLの帰還路のノイズをさらにフィルタする技術。長田博論第5章の技術。</td></tr>
+            <tr><td>flicker corner</td><td>白色雑音とフリッカー雑音のパワーが等しくなる周波数。この論文ではRVCOについて5&thinsp;MHzと仮定。</td></tr>
+          </tbody>
+        </table>
+        </div>
+      </div>
+    </section>
+
+  </main>
+</div>
+</body>
+</html>

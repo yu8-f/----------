@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex, nofollow">
-<title>PLL論文 読書ノート — 長田博論（HMベース Fractional-N PLL）</title>
+<title>PLL論文 読書ノート集</title>
 <style>
 :root {
   --bg:#f6f5f2; --bg-card:#fff; --text:#2b2a28; --text-muted:#6b6862; --border:#e4e1da;
@@ -52,10 +52,10 @@ hr { border:none; border-top:1px solid var(--border); margin:32px 0; }
 </head>
 <body>
 <div class="wrap">
-  <h1>PLL論文 読書ノート<br>― 長田将 博士論文（HMベース Fractional-N PLL）―</h1>
-  <p class="lead">飯塚研の先行博論（長田将さん, 2023年12月）を読むための自分用ノート集。下の順に読むのがおすすめ。</p>
+  <h1>PLL論文 読書ノート集<br>― HMベース Fractional-N PLL 関連 ―</h1>
+  <p class="lead">飯塚研のPLL関連論文を読むための自分用ノート集。論文ごとにまとまっている。長田博論はまず下の順に読むのがおすすめ。</p>
 
-  <div class="order">読む順</div>
+  <div class="order">① 長田将 博士論文（HMベース Fractional-N PLL）</div>
 
   <a class="card" href="basics.html">
     <div class="card-head"><span class="num">1</span>
@@ -81,7 +81,21 @@ hr { border:none; border-top:1px solid var(--border); margin:32px 0; }
   </div>
 
   <hr>
-  <p class="src">この論文の一言：「Fractional-N PLL の量子化ノイズ／スパーを、分周器帰還（ゲイン 1/N）から高調波ミキサによる周波数の引き算（ゲイン 1）に置き換え、キャリブレーション無しで抑える」。3章 Dual-Feedback が主提案、4章＝HM固有のオフセットスパー、5章＝PDLPF併用でリングVCO対応、6章＝フィードフォワード雑音キャンセルで余分VCO対策、7章＝展望。</p>
+
+  <div class="order">② 関連論文</div>
+
+  <a class="card" href="dtc-hm-optimization-notes.html">
+    <div class="card-head"><span class="num">4</span>
+      <span class="card-title">DTC/HM方式 最適化比較論文<span class="file">dtc-hm-optimization-notes.html</span></span></div>
+    <p>Zhu, Osada, Zhang, Iizuka, "Optimization of DTC-Based and Harmonic-Mixer-Based Fractional-N PLLs" (IEEE TCAS-I, 2025)。NSGA-IIでDTCベースとHMベースDual-Feedbackのジッタ/電力トレードオフを比較。同じ飯塚研の直近の論文で、長田博論のDual-Feedback構成が主役の一つとして登場する。</p>
+  </a>
+
+  <div class="aside">
+    <p><strong>図について</strong>：各論文の図はそれぞれ本文PDFから切り出し、<code>figures/</code> 直下（長田博論用）または <code>figures/&lt;論文名&gt;/</code>（関連論文用、命名衝突を避けるためサブフォルダ分け）に置いてある。</p>
+  </div>
+
+  <hr>
+  <p class="src">長田博論の一言：「Fractional-N PLL の量子化ノイズ／スパーを、分周器帰還（ゲイン 1/N）から高調波ミキサによる周波数の引き算（ゲイン 1）に置き換え、キャリブレーション無しで抑える」。3章 Dual-Feedback が主提案、4章＝HM固有のオフセットスパー、5章＝PDLPF併用でリングVCO対応、6章＝フィードフォワード雑音キャンセルで余分VCO対策、7章＝展望。</p>
 </div>
 </body>
 </html>
