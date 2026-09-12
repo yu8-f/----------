@@ -26,7 +26,11 @@
     - `dtc-hm-optimization-notes.html` — Zhu, Osada, Zhang, Iizuka, "Optimization of
       DTC-Based and Harmonic-Mixer-Based Fractional-N PLLs" (IEEE TCAS-I, 2025) のまとめ。
       同じ飯塚研の直近論文で、長田博論のDual-Feedback構成が比較対象の一つとして登場する。
-    - 図は `figures/optimization-paper/` に(論文ごとに命名衝突を避けるためサブフォルダ分け)
+      図は `figures/optimization-paper/`。
+    - `hm-ffnc-notes.html` — Zhang, Osada, Zhu, Iizuka, "A Harmonic-Mixer-Based
+      Fractional-N PLL Employing Voltage-Domain Feed-Forward Noise Cancellation"
+      (IEEE JSSC, 2025) のまとめ。Dual-Feedback構成の補助VCOノイズ・電力オーバーヘッドを
+      フィードフォワード雑音キャンセルで軽減する実チップ論文。図は `figures/ffnc-paper/`。
   - ※旧 `.md`/`.pdf` の章ノートは内容を HTML に統合したため削除済み(git 履歴に残る)
   - 新しい論文のノートを追加するときは、`figures/<論文名>/` のように図をサブフォルダに
     分けたうえで、`index.html` に論文ごとのセクション(カード)を足す。既存ノートのファイル名・

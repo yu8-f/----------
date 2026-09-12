@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>HMベースPLL 電圧領域FFNC論文 読書ノート</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.css">
+<style>
+:root {
+  --bg:#f6f5f2; --bg-card:#fff; --text:#2b2a28; --text-muted:#6b6862; --border:#e4e1da;
+  --accent:#b5791f; --accent-soft:#f7efdd;
+  --callout-bg:#fbf7ec; --callout-border:#e8dcb0;
+  --casual-bg:#f1f0fb; --casual-border:#d9d6f2;
+  --warn-bg:#fdeee9; --warn-border:#f0c9ba;
+  --ana-bg:#eef6f0; --ana-border:#c4e2cd;
+  --rel-bg:#eaf1f9; --rel-border:#b9d3ea;
+  --code-bg:#f0efec; --shadow:0 1px 3px rgba(0,0,0,.06);
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg:#1c1b19; --bg-card:#262523; --text:#eae8e3; --text-muted:#a39e93; --border:#3a3835;
+    --accent:#e0ab5f; --accent-soft:#3d3016;
+    --callout-bg:#33301f; --callout-border:#57502c;
+    --casual-bg:#2a2840; --casual-border:#423e63;
+    --warn-bg:#3a2820; --warn-border:#6b4636;
+    --ana-bg:#1e3329; --ana-border:#2f5140;
+    --rel-bg:#1c2c3d; --rel-border:#2c4863;
+    --code-bg:#302e2b; --shadow:0 1px 3px rgba(0,0,0,.3);
+  }
+}
+* { box-sizing:border-box; }
+body { margin:0; background:var(--bg); color:var(--text);
+  font-family:"Hiragino Sans","Yu Gothic","Segoe UI",system-ui,sans-serif; line-height:1.85; }
+.layout { display:flex; max-width:1180px; margin:0 auto; align-items:flex-start; }
+.sidebar { position:sticky; top:0; flex:0 0 230px; height:100vh; overflow-y:auto;
+  padding:26px 16px; border-right:1px solid var(--border); font-size:.88rem; }
+.sidebar h1 { font-size:1rem; margin:0 0 4px; }
+.sidebar .src { font-size:.76rem; color:var(--text-muted); margin:0 0 18px; }
+.sidebar a { display:block; padding:5px 9px; margin:1px 0; border-radius:6px;
+  color:var(--text); text-decoration:none; font-size:.85rem; }
+.sidebar a:hover { background:var(--accent-soft); }
+main { flex:1; min-width:0; padding:30px 44px 100px; overflow-x:hidden; max-width:100%; }
+.page-header { margin-bottom:34px; padding-bottom:18px; border-bottom:1px solid var(--border); }
+.page-header h1 { margin:0 0 10px; font-size:1.5rem; line-height:1.4; }
+.page-header p { margin:6px 0; color:var(--text-muted); }
+.sec { margin-bottom:44px; scroll-margin-top:16px; }
+.sec > h2 { font-size:1.28rem; padding-bottom:9px; border-bottom:2px solid var(--accent); margin-bottom:22px; }
+.card { background:var(--bg-card); border:1px solid var(--border); border-radius:12px;
+  padding:22px 26px; margin-bottom:20px; box-shadow:var(--shadow); overflow-wrap:anywhere; }
+.card h3 { margin-top:0; font-size:1.1rem; color:var(--accent); }
+.card h4 { font-size:.98rem; margin:20px 0 8px; }
+ul { padding-left:1.3em; margin:8px 0 14px; }
+li { margin-bottom:5px; }
+.note { color:var(--text-muted); font-size:.92rem; }
+.callout { background:var(--callout-bg); border:1px solid var(--callout-border);
+  border-radius:10px; padding:13px 17px; margin:12px 0 18px; }
+.callout p:last-child { margin-bottom:0; }
+.callout-label { font-weight:700; font-size:.84rem; margin:0 0 6px; color:var(--text-muted); }
+.callout.ana { background:var(--ana-bg); border-color:var(--ana-border); }
+.callout.casual { background:var(--casual-bg); border-color:var(--casual-border); }
+.callout.warn { background:var(--warn-bg); border-color:var(--warn-border); }
+.callout.rel { background:var(--rel-bg); border-color:var(--rel-border); }
+.data-table { width:100%; border-collapse:collapse; margin:12px 0 18px; font-size:.9rem; }
+.data-table th,.data-table td { border:1px solid var(--border); padding:8px 11px; text-align:left; vertical-align:top; }
+.data-table th { background:var(--code-bg); font-weight:700; }
+.tbl-scroll { overflow-x:auto; }
+.fig { margin:16px 0; }
+.fig img { width:100%; max-width:640px; display:block; border:1px solid var(--border);
+  border-radius:8px; background:#fff; padding:8px; }
+.fig figcaption { font-size:.82rem; color:var(--text-muted); margin-top:6px; }
+.katex-display { overflow-x:auto; overflow-y:hidden; padding:4px 0; }
+</style>
+</head>
+<body>
+<div class="layout">
+  <nav class="sidebar">
+    <h1>HMベースPLL FFNC論文ノート</h1>
+    <p class="src">Zhang, Osada, Zhu, Iizuka, "A Harmonic-Mixer-Based Fractional-N PLL Employing Voltage-Domain Feed-Forward Noise Cancellation" (IEEE JSSC, 2025)</p>
+    <a href="index.html" style="font-weight:700;">← 目次にもどる</a>
+    <a href="#zero">0. この論文を超ざっくり</a>
+    <a href="#background">1. 背景：補助VCOのオーバーヘッド問題</a>
+    <a href="#proposal">2. 提案：電圧領域FFNC</a>
+    <a href="#robustness">3. ゲイン誤差への頑健性</a>
+    <a href="#measurement">4. 測定結果</a>
+    <a href="#thesis-rel">5. 卒論との関係</a>
+    <a href="#depth">6. 深掘り箇所 / 飛ばしていい箇所</a>
+    <a href="#glossary">7. 用語補足</a>
+  </nav>
+  <main>
+    <header class="page-header">
+      <h1>A Harmonic-Mixer-Based Fractional-N PLL Employing Voltage-Domain Feed-Forward Noise Cancellation 読書ノート</h1>
+      <p>Haoming Zhang, Masaru Osada, Yuyang Zhu, Tetsuya Iizuka, <em>IEEE Journal of Solid-State Circuits</em>, vol.&nbsp;60, no.&nbsp;8, pp.&nbsp;2820&ndash;2831, Aug. 2025.</p>
+      <p class="note">著者に長田将さん・飯塚教授本人が入っている飯塚研の実チップ論文。<a href="dtc-hm-optimization-notes.html">DTC/HM最適化比較論文ノート</a>と同じグループの一連の研究。図は本文PDF（<code>参考論文/</code>）から切り出したもの。個人の学習用。</p>
+    </header>
+
+    <!-- 0 -->
+    <section id="zero" class="sec">
+      <h2>0. この論文を超ざっくり</h2>
+      <div class="card">
+        <p>HMベースDual-Feedback PLL（<a href="thesis-notes.html">長田博論ノート</a>第3章の主提案）の最大の弱点は、<strong>補助（外部）PLLのために余分なVCOが必要で、そのノイズ・電力がオーバーヘッドになる</strong>こと。この論文は、その補助VCOのノイズを<strong>電圧領域のフィードフォワード雑音キャンセル（FFNC）</strong>で消す技術を提案し、65nm CMOSで実チップ化した。</p>
+        <p>結果：補助VCOのジッタ寄与を54%→2%まで圧縮し、電力オーバーヘッドはわずか0.63&thinsp;mW。全体で106&thinsp;fs rmsジッタ・-63&thinsp;dBc最悪スパーを達成。</p>
+        <div class="callout casual">
+          <p class="callout-label">これだけ覚えて次へ</p>
+          <p>Dual-Feedback構成の「もう1個PLLがいる」という代償を、高速な回路を追加せずに、既存のSPD出力を主PD出力に足すだけ（信号を"引き算"ならぬ"足し算"でキャンセル）で軽くした、という話。</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 1 -->
+    <section id="background" class="sec">
+      <h2>1. 背景：補助VCOのノイズ・電力オーバーヘッド問題</h2>
+      <div class="card">
+        <div class="fig">
+          <img src="figures/ffnc-paper/fig2.png" alt="Fig.2 Integer-N/Fractional-N/Dual-feedback HMベースPLLの主要ノイズ源">
+          <figcaption>Fig.2　(a)Integer-N、(b)Fractional-N、(c)Dual-feedback HMベースPLLの主要ノイズ源。(c)ではPD・分周器の数が倍になるが、主PLLのPD・分周器ノイズはunityゲインで増幅されないため無視できる。残る問題は<strong>補助VCOそのもののノイズと電力</strong>。</figcaption>
+        </div>
+        <p>補助VCOのノイズは、補助PLL自身でハイパスフィルタされ、さらに主PLLでローパスフィルタされる（2段構えで削れる）。しかし主PLLのフィルタ効果を十分に得るには<strong>補助PLLの帯域幅を主PLLよりずっと広く</strong>取る必要があり、これは安定性（位相マージン、基準周波数の半分以下という制約）とトレードオフになる。特に基準周波数が低い（実用上有利なXTAL発振器を使う）ほど、この制約は厳しくなる。</p>
+        <h4>既存の対策とその欠点：VCDLベースFFNC</h4>
+        <p>先行研究（Nagam &amp; Kinget, 2018）は、補助PLL出力にVCDL（電圧制御遅延線）を置き、SPD出力でVCDLを制御してノイズをキャンセルする方式。安定性への悪影響はないが、<strong>VCDLがGHz級の高速動作＋広い遅延レンジを要求される</strong>ため、ノイズ・電力オーバーヘッドが大きく、プロセスばらつきでゲイン調整も難しい。</p>
+      </div>
+    </section>
+
+    <!-- 2 -->
+    <section id="proposal" class="sec">
+      <h2>2. 提案：電圧領域FFNC</h2>
+      <div class="card">
+        <p>VCDLのような高速回路を使わず、<strong>補助PLLのSPD（サンプリング位相検出器）出力を、抵抗ベースの帰還アンプでゲイン調整してから、主PLLのPD出力に直接加算する</strong>方式。</p>
+        <div class="fig">
+          <img src="figures/ffnc-paper/fig5.png" alt="Fig.5 提案FFNCコンセプト">
+          <figcaption>Fig.5　提案FFNCコンセプト。補助SPLL(下)のSPD出力を、主HM-PLL(上)のPD出力に足し込む(赤い経路)。高速遅延線が不要で、安定性にも影響しない。</figcaption>
+        </div>
+        <div class="fig">
+          <img src="figures/ffnc-paper/fig6.png" alt="Fig.6 提案PLLの雑音源つき線形モデル">
+          <figcaption>Fig.6　線形モデル。$K_\text{FF}$(フィードフォワード経路のゲイン)が赤枠。</figcaption>
+        </div>
+        <p>キャンセルの条件は、主信号経路のゲイン $k/M \cdot K_\text{PDM}$ と、キャンセル経路のゲイン $K_\text{FF}K_\text{PDA}/N_A$ を一致させること(式10)。完全に一致すれば理想的には補助VCOノイズを消せるが、実際にはSPDのサンプリング特性 $H_\text{SF}(s)$ が乗るため、$f_\text{REF}/2$ を超える成分は検出できない。それでも従来より遥かに広い帯域($f_\text{REF}/2$近く)でハイパスフィルタ効果が得られる(式11、Fig.8)。</p>
+        <div class="callout">
+          <p class="callout-label">ゲイン誤差の主要因を1つに絞り込む発想</p>
+          <p>主・キャンセル経路のゲイン比を分解すると、変わりうるのは実質<strong>SPDのゲイン $K_\text{PDA}$ だけ</strong>(分周比は離散値でばらつかない、PDのゲインは電源電圧管理下で無視できる、フィードフォワード段のゲインは抵抗比なので安定)。だから回路設計の力点をSPDのPVT耐性一点に絞れる、という設計の切り分け方が実務的。</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 3 -->
+    <section id="robustness" class="sec">
+      <h2>3. ゲイン誤差への頑健性</h2>
+      <div class="card">
+        <div class="fig">
+          <img src="figures/ffnc-paper/fig9.png" alt="Fig.9 ゲイン誤差ごとのPNスペクトルと積分ジッタ">
+          <figcaption>Fig.9　(a)ゲイン誤差ごとの計算PNスペクトル、(b)ゲイン誤差ごとの積分ジッタ。キャンセル無し(166&thinsp;fs)に対し、±20%のゲイン誤差内なら100&thinsp;fs前後を維持。</figcaption>
+        </div>
+        <p>ゲイン誤差が±20%程度に収まっていれば性能劣化はほぼ無視できる、という結果。実際のSPD実装では、単純な電流源バイアスだと±34.2%ばらつくところ、<strong>スイッチトキャパシタ(SC)ベースのバイアス生成</strong>で±18.7%(改良版では±5.4%)まで抑え込み、キャリブレーション無しで許容範囲に収めている。これがこの論文のもう一つの核心(「補助VCOノイズを消す」だけでなく「消すための回路自体のPVT耐性を無キャリブレーションで確保する」という2段構えの設計)。</p>
+      </div>
+    </section>
+
+    <!-- 4 -->
+    <section id="measurement" class="sec">
+      <h2>4. 測定結果</h2>
+      <div class="card">
+        <p>65nm CMOS、0.36&thinsp;mm²、基準周波数80&thinsp;MHz。補助PLLにLC-VCOを使う場合と、あえて悪いVCO(効果の実証用)としてリングVCOを使う場合の両方で測定。</p>
+        <div class="fig">
+          <img src="figures/ffnc-paper/fig18.png" alt="Fig.18 FFNC ON/OFFでの測定PN比較">
+          <figcaption>Fig.18　全体PLLの測定PN。(a)補助LC VCO使用時：FFNC OFFで148.9&thinsp;fs→ONで105.8&thinsp;fs。(b)補助リングVCO使用時：392.1&thinsp;fs→127.9&thinsp;fs。ノイズの大きいリングVCOほど、むしろ改善効果が大きい。</figcaption>
+        </div>
+        <div class="fig">
+          <img src="figures/ffnc-paper/fig19.png" alt="Fig.19 測定PNと各ブロックの計算寄与内訳">
+          <figcaption>Fig.19　LC VCO使用時の測定PN(実測+計算内訳)。補助VCOのジッタ寄与はFFNC無しで54%、有りで2%まで低下。基準ノイズ(46%)・主VCOノイズ(47%)が支配的になり、"補助VCOがボトルネックだった"状態から抜け出せている。</figcaption>
+        </div>
+        <div class="fig">
+          <img src="figures/ffnc-paper/fig20.png" alt="Fig.20 消費電力内訳">
+          <figcaption>Fig.20　消費電力内訳。フィードフォワード経路自体はわずか0.63&thinsp;mW(LC VCO時、全体12.58&thinsp;mWの5%)。FoMはLC VCO時-245.8→-248.5&thinsp;dB、リングVCO時-234.8→-244.4&thinsp;dBに改善。同じ効果を電力増加だけで狙うと補助VCOが75&thinsp;mW(50倍)必要になり、FoMはむしろ悪化する、という比較も本文に載っている。</figcaption>
+        </div>
+        <p class="note">性能表(Table I)では、キャリブレーション不要なQ-noise抑制方式の中で最小のジッタを達成。DTCベースの一部の研究はさらに良いジッタを出しているが、それらは基準周波数250&thinsp;MHzという実用上不利な条件(市販XTALで作りにくい)を使っており、80&thinsp;MHz基準のこの論文はFoM<sub>REF</sub>で上回る。</p>
+      </div>
+    </section>
+
+    <!-- 5 -->
+    <section id="thesis-rel" class="sec">
+      <h2>5. マスターの卒論との関係</h2>
+      <div class="card">
+        <p>この論文は<a href="thesis-notes.html">長田博論ノート</a>第3章のDual-Feedback構成そのものの実チップ改良版で、著者にOsada・飯塚教授が入っている直系の関連研究。<a href="dtc-hm-optimization-notes.html">DTC/HM最適化比較論文</a>とも同じ研究ライン上にある。</p>
+        <ul>
+          <li><strong>Dual-Feedback構成最大の弱点への具体的な回答</strong>&mdash;&mdash;「補助PLLがいる」という代償を、追加の高速回路無しに軽減する実例。卒論でDual-Feedback構成の課題と対策を論じる際、DTCベースとの比較だけでなく「Dual-Feedback自身の弱点をどう潰すか」という軸の先行技術として使える。</li>
+          <li><strong>雑音伝達関数(NTF)の立て方の実例</strong>&mdash;&mdash;式(1)〜(12)は、主PLL・補助PLLそれぞれの雑音源から出力までの伝達関数を、線形モデル(Fig.6)から系統的に導出する手順そのもの。卒論のシミュレーション・解析パートを書く際のテンプレートとして直接参考にできる。</li>
+          <li><strong>「キャリブレーション不要」という設計思想の徹底</strong>&mdash;&mdash;FFNCのゲイン誤差要因をSPD一点に絞り込み、それをSC-biasedな回路技術で無キャリブレーションのままPVT耐性を確保する、という流れ全体が、長田研の一貫した設計哲学(HMベース＝キャリブレーションレスが売り)の実践例になっている。</li>
+          <li><strong>ジッタ・電力オーバーヘッドの定量的な比較軸</strong>&mdash;&mdash;「同じ効果を電力増加だけで達成しようとすると50倍の電力が要る」という比較(Sec.V)は、ノイズキャンセル技術の価値を定量的に示す論法として、卒論の考察でも使える型。</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- 6 -->
+    <section id="depth" class="sec">
+      <h2>6. 深掘り価値がある箇所 / 飛ばしていい箇所</h2>
+      <div class="card">
+        <h4>深掘りする価値あり</h4>
+        <ul>
+          <li>Sec.&nbsp;III(式1〜12、Fig.5〜10)：NTFの導出とFFNCのフィルタ特性。数式ベースの解析の書き方として厚めに読む価値がある。</li>
+          <li>Sec.&nbsp;IVのSC-biasedなSPDスロープジェネレータ(Fig.12〜14)：キャリブレーション無しでPVT耐性を出す回路の考え方。回路設計まで踏み込むなら必読。</li>
+          <li>Table&nbsp;I：他のQ-noise抑制方式(DTCベース含む)との定量比較。ポジショニングの書き方の参考になる。</li>
+        </ul>
+        <h4>飛ばしてよい</h4>
+        <ul>
+          <li>Fig.11〜16の回路実装細部(トランジスタサイジングの調整履歴など)。回路を自分で設計しない限り不要。</li>
+          <li>Fig.21・22のスパー測定の細部(結論は「フラクショナルスパー-63dBc、基準スパー-77dBc」で足りる)。</li>
+          <li>参考文献リスト・著者紹介。</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- 7 -->
+    <section id="glossary" class="sec">
+      <h2>7. 用語・前提の補足</h2>
+      <div class="card">
+        <div class="tbl-scroll">
+        <table class="data-table">
+          <thead><tr><th>用語</th><th>意味</th></tr></thead>
+          <tbody>
+            <tr><td>FFNC (Feed-Forward Noise Cancellation)</td><td>フィードフォワード雑音キャンセル。ループ内でなく、外から直接ノイズ成分を足し込んで打ち消す方式。ループの安定性に影響しないのが利点。</td></tr>
+            <tr><td>VCDL (Voltage-Controlled Delay Line)</td><td>電圧制御遅延線。先行研究のFFNCで使われた高速回路。GHz級動作が必要でオーバーヘッドが大きい。</td></tr>
+            <tr><td>SPD (Sampling Phase Detector)</td><td>サンプリング型位相検出器。<a href="dtc-hm-optimization-notes.html">DTC/HM最適化論文ノート</a>にも既出。</td></tr>
+            <tr><td>SC-biased (Switched-Capacitor-based biasing)</td><td>スイッチトキャパシタ方式のバイアス生成。電流源が容量比に比例するよう設計し、プロセスばらつきの影響を減らす回路テクニック。</td></tr>
+            <tr><td>NTF (Noise Transfer Function)</td><td>雑音伝達関数。ある雑音源から出力までの伝達特性。ハイパス/ローパスの形で表れる。</td></tr>
+            <tr><td>FoM<sub>REF</sub></td><td>基準周波数の違いを補正したFoM。低い基準周波数(実用上有利)を使う設計を、高い基準周波数を使う設計と公平に比較するための指標。</td></tr>
+          </tbody>
+        </table>
+        </div>
+      </div>
+    </section>
+
+  </main>
+</div>
+</body>
+</html>
